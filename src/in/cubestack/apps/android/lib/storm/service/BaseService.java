@@ -7,10 +7,13 @@ import in.cubestack.apps.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.apps.android.lib.storm.core.QueryGenerator;
 import in.cubestack.apps.android.lib.storm.core.ReflectionUtil;
 import in.cubestack.apps.android.lib.storm.core.RelationMetaData;
+import in.cubestack.apps.android.lib.storm.core.StormException;
 import in.cubestack.apps.android.lib.storm.core.TableInformation;
 import in.cubestack.apps.android.lib.storm.criteria.Projection;
 import in.cubestack.apps.android.lib.storm.criteria.Restriction;
+import in.cubestack.apps.android.lib.storm.criteria.Restrictions;
 import in.cubestack.apps.android.lib.storm.criteria.StormProjection;
+import in.cubestack.apps.android.lib.storm.criteria.StormRestrictions;
 import in.cubestack.apps.android.lib.storm.lifecycle.LifeCycleEnvent;
 import in.cubestack.apps.android.lib.storm.lifecycle.LifeCycleHandler;
 import in.cubestack.apps.android.lib.storm.mapper.RawRowMapper;
@@ -63,6 +66,22 @@ public class BaseService {
         dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
     }
 
+    public <E> Projection projectionFor(Class<E> entity) throws StormException  {
+    	try {
+			return new StormProjection(EntityMetaDataCache.getMetaData(entity));
+		} catch (Exception exception) {
+			throw new StormException(exception);
+		}
+    }
+    
+    public <E> Restrictions restrictionsFor(Class<E> entity) throws StormException  {
+    	try {
+    		return new StormRestrictions(EntityMetaDataCache.getMetaData(entity));
+    	} catch (Exception exception) {
+			throw new StormException(exception);
+		}
+    }
+    
     @SuppressWarnings("unchecked")
 	public <E> void save(E entity, boolean retain) throws Exception {
         LifeCycleHandler<E> handler = null;
