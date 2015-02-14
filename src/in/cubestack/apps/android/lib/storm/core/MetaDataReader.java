@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 import java.util.LinkedList;
 
 /**
- * A simple dao framework for Java based ORM Copyright (c) 2011 Supal Dubey,
+ * A core Android SQLite ORM framrwork build for speed and raw execution. Copyright (c) 2011 Supal Dubey,
  * supal.dubey@gmail.com
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy

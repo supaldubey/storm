@@ -3,18 +3,18 @@ package in.cubestack.apps.android.lib.storm.mapper;
 import in.cubestack.apps.android.lib.storm.FetchType;
 import in.cubestack.apps.android.lib.storm.core.ColumnMetaData;
 import in.cubestack.apps.android.lib.storm.core.EntityMetaDataCache;
-import in.cubestack.apps.android.lib.storm.core.ReflectionUtil;
 import in.cubestack.apps.android.lib.storm.core.RelationMetaData;
 import in.cubestack.apps.android.lib.storm.core.TableInformation;
 import in.cubestack.apps.android.lib.storm.fields.FieldStrategyHandler;
+import in.cubestack.apps.android.lib.storm.util.Reflections;
 
 import java.util.Collection;
 
 import android.database.Cursor;
 
 /**
- * A simple dao framework for Java based ORM
- * Copyright (c) 2011 Supal Dubey, supal.dubey@gmail.com
+ * A core Android SQLite ORM framrwork build for speed and raw execution.
+ * Copyright (c) 2014  CubeStack. Version built for Flash Back..
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -53,9 +53,9 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 	            
 	            primaryKeyVal = FieldStrategyHandler.handlerFor(metaData.getFiledTypes()).getValue(cursor, columnIndex++);
 	            
-				ReflectionUtil.setField(instance, metaData.getAlias(), primaryKeyVal );
+				Reflections.setField(instance, metaData.getAlias(), primaryKeyVal );
 	            for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
-					ReflectionUtil.setField(instance, columnMetaData.getAlias(), FieldStrategyHandler.handlerFor(columnMetaData.getFiledTypes()).getValue(cursor, columnIndex++));
+					Reflections.setField(instance, columnMetaData.getAlias(), FieldStrategyHandler.handlerFor(columnMetaData.getFiledTypes()).getValue(cursor, columnIndex++));
 	            }
         	}
             // Start mappping relations. .
@@ -94,19 +94,19 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 		TableInformation tableInformation = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
 		
 		ColumnMetaData metaData = tableInformation.getPrimaryKeyData();
-        ReflectionUtil.setField(entity, metaData.getAlias(), FieldStrategyHandler.handlerFor(metaData.getFiledTypes()).getValue(cursor, columnIndex++));
+        Reflections.setField(entity, metaData.getAlias(), FieldStrategyHandler.handlerFor(metaData.getFiledTypes()).getValue(cursor, columnIndex++));
         for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
-			ReflectionUtil.setField(entity, columnMetaData.getAlias(), FieldStrategyHandler.handlerFor(columnMetaData.getFiledTypes()).getValue(cursor, columnIndex++));
+			Reflections.setField(entity, columnMetaData.getAlias(), FieldStrategyHandler.handlerFor(columnMetaData.getFiledTypes()).getValue(cursor, columnIndex++));
         }
 		
-		if(ReflectionUtil.getFieldValue(instance, prop) == null) {
+		if(Reflections.getFieldValue(instance, prop) == null) {
 			// Instantiate and set
 			if(relationMetaData.isCollectionBacked()) {
-				ReflectionUtil.setField(instance, prop, relationMetaData.getBackingImplementation().newInstance());
-				Collection<Object> xCOl = (Collection<Object>) ReflectionUtil.getFieldValue(instance, prop);
+				Reflections.setField(instance, prop, relationMetaData.getBackingImplementation().newInstance());
+				Collection<Object> xCOl = (Collection<Object>) Reflections.getFieldValue(instance, prop);
 				xCOl.add(entity);
 			} else {
-				ReflectionUtil.setField(instance, prop, entity);
+				Reflections.setField(instance, prop, entity);
 			}
 		}
 	}

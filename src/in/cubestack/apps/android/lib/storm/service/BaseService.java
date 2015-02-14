@@ -5,7 +5,6 @@ import in.cubestack.apps.android.lib.storm.core.ColumnMetaData;
 import in.cubestack.apps.android.lib.storm.core.DatabaseMetaData;
 import in.cubestack.apps.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.apps.android.lib.storm.core.QueryGenerator;
-import in.cubestack.apps.android.lib.storm.core.ReflectionUtil;
 import in.cubestack.apps.android.lib.storm.core.RelationMetaData;
 import in.cubestack.apps.android.lib.storm.core.StormException;
 import in.cubestack.apps.android.lib.storm.core.TableInformation;
@@ -19,8 +18,9 @@ import in.cubestack.apps.android.lib.storm.lifecycle.LifeCycleHandler;
 import in.cubestack.apps.android.lib.storm.mapper.RawRowMapper;
 import in.cubestack.apps.android.lib.storm.mapper.ReflectionRowMapper;
 import in.cubestack.apps.android.lib.storm.mapper.RowMapper;
-import in.cubestack.apps.android.lib.storm.mapper.RowMapperHelper;
 import in.cubestack.apps.android.lib.storm.task.TaskDispatcher;
+import in.cubestack.apps.android.lib.storm.util.Reflections;
+import in.cubestack.apps.android.lib.storm.util.StormUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +34,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
- * A simple dao framework for Java based ORM
- * Copyright (c) 2011 Supal Dubey, supal.dubey@gmail.com
+ * A core Android SQLite ORM framrwork build for speed and raw execution.
+ * Copyright (c) 2014  CubeStack. Version built for Flash Back..
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -55,7 +55,7 @@ import android.util.Log;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class BaseService {
+public class BaseService implements StormService {
 
     private static final String TAG = BaseService.class.getSimpleName();
 
@@ -66,7 +66,8 @@ public class BaseService {
         dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
     }
 
-    public <E> Projection projectionFor(Class<E> entity) throws StormException  {
+    @Override
+	public <E> Projection projectionFor(Class<E> entity) throws StormException  {
     	try {
 			return new StormProjection(EntityMetaDataCache.getMetaData(entity));
 		} catch (Exception exception) {
@@ -74,7 +75,8 @@ public class BaseService {
 		}
     }
     
-    public <E> Restrictions restrictionsFor(Class<E> entity) throws StormException  {
+    @Override
+	public <E> Restrictions restrictionsFor(Class<E> entity) throws StormException  {
     	try {
     		return new StormRestrictions(EntityMetaDataCache.getMetaData(entity));
     	} catch (Exception exception) {
@@ -90,7 +92,10 @@ public class BaseService {
             handler = (LifeCycleHandler<E>) tableInformation.getHandler();
             if(handler == null || handler.preSave(entity)) {
             	long id = dbHelper.getWritableDatabase().insert(tableInformation.getTableName(), null, generateContentValues(entity));
-            	ReflectionUtil.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
+            	Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
+            	if(handler != null) {
+                	new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, null);
+                }
             }
         } catch(Throwable throwable) {
         	if(handler != null) {
@@ -105,11 +110,13 @@ public class BaseService {
     }
     
     
+	@Override
 	public <E> void save(E entity) throws Exception {
     	save(entity, false);
     }
     
     
+	@Override
 	public <E> void save(List<E> entities) throws Exception {
     	try {
     		dbHelper.getWritableDatabase().beginTransaction();
@@ -130,7 +137,8 @@ public class BaseService {
 		}
 	}
 
-    public <E> int update(E entity) throws Exception {
+    @Override
+	public <E> int update(E entity) throws Exception {
     	return update(entity, false);
     }
     
@@ -143,6 +151,7 @@ public class BaseService {
         }
     }
     
+	@Override
 	public <E> void update(List<E> entities) throws Exception {
 		long startTime = System.currentTimeMillis();
 		dbHelper.getWritableDatabase().beginTransaction();
@@ -158,7 +167,7 @@ public class BaseService {
     private <E> String[] generateWhereVal(E entity) {
         try {
             TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
-            Object val = ReflectionUtil.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias());
+            Object val = Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias());
             if (val != null) {
                 return new String[]{val.toString()};
             }
@@ -177,6 +186,7 @@ public class BaseService {
      * @param id
      * @return
      */
+	@Override
 	public <E> E findById(Class<E> type, long id) throws Exception {
         E row = null;
         Cursor cursor = null;
@@ -192,7 +202,8 @@ public class BaseService {
         return row;
     }
 
-    public <E> int truncateTable(E entity) throws Exception {
+    @Override
+	public <E> int truncateTable(E entity) throws Exception {
         try {
             TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
             return dbHelper.getWritableDatabase().delete(tableInformation.getTableName(), null, null);
@@ -201,7 +212,8 @@ public class BaseService {
         }
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
 	public <E> int delete(E entity) throws Exception {
     	LifeCycleHandler<E> handler = null;
         try {
@@ -212,6 +224,7 @@ public class BaseService {
             if(handler == null || handler.preDelete(entity)) {
             	return dbHelper.getWritableDatabase().delete(tableInformation.getTableName(), generateWhereId(tableInformation), generateWhereVal(entity));
             }
+            new TaskDispatcher(handler, LifeCycleEnvent.POST_DELETE).execute(entity, null);
             dbHelper.getWritableDatabase().endTransaction();
         } catch(Throwable throwable) {
         	if(handler != null) {
@@ -237,7 +250,7 @@ public class BaseService {
     				}
     			}
     			if(isDeletion) {
-    				Object relation = ReflectionUtil.getFieldValue(entity, relationMetaData.getProperty());
+    				Object relation = Reflections.getFieldValue(entity, relationMetaData.getProperty());
     				if(relation != null) {
     					// We need to delete this.
     					if(relation instanceof Collection<?>) {
@@ -257,7 +270,8 @@ public class BaseService {
     }
     
     
-    public List<Object> project(Class<?> type, Restriction restriction, Projection projection) throws Exception {
+    @Override
+	public List<Object> project(Class<?> type, Restriction restriction, Projection projection) throws Exception {
         Cursor cursor = null;
         List<Object> returnList = new ArrayList<Object>();
         RowMapper<List<String>> mapper =  new RawRowMapper();
@@ -276,7 +290,8 @@ public class BaseService {
         return returnList;
     }
     
-    public <E> List<E> find(Class<E> type, Restriction restriction) throws Exception {
+    @Override
+	public <E> List<E> find(Class<E> type, Restriction restriction) throws Exception {
         Cursor cursor = null;
         List<E> returnList = new ArrayList<E>();
         RowMapper<E> mapper =  new ReflectionRowMapper<E>(type);
@@ -296,7 +311,8 @@ public class BaseService {
     }
     
 
-    public <E> E findOne(Class<E> type, Restriction restriction) throws Exception {
+    @Override
+	public <E> E findOne(Class<E> type, Restriction restriction) throws Exception {
     	Cursor cursor = null;
     	E returnVal  = null;
         RowMapper<E> mapper =  new ReflectionRowMapper<E>(type);
@@ -315,7 +331,8 @@ public class BaseService {
         return returnVal;
     }
     
-    public <E> int count(Class<E> type, Restriction restriction) throws Exception {
+    @Override
+	public <E> int count(Class<E> type, Restriction restriction) throws Exception {
     	Cursor cursor = null;
     	try {
 	    	TableInformation tableInfo = EntityMetaDataCache.getMetaData(type);
@@ -330,7 +347,7 @@ public class BaseService {
 	    		List<String> res = mapper.map(cursor, tableInfo);
 	    		if(res != null && res.size() > 0) {
 	    			String length = res.get(0);
-	    			return RowMapperHelper.safeParse(length);
+	    			return StormUtil.safeParse(length);
 	    		}
 	    	}
     	}
@@ -358,7 +375,7 @@ public class BaseService {
         ContentValues values = new ContentValues();
         for (ColumnMetaData column : tableInformation.getColumnMetaDataList()) {
             try {
-                Object obj = ReflectionUtil.getFieldValue(entity, column.getAlias());
+                Object obj = Reflections.getFieldValue(entity, column.getAlias());
                 if (obj != null) {
                     values.put(column.getColumnName(), obj.toString());
                 } else {

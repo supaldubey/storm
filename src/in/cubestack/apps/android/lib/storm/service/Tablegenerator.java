@@ -9,8 +9,8 @@ import java.util.List;
 import android.util.Log;
 
 /**
- * A simple dao framework for Java based ORM
- * Copyright (c) 2011 Supal Dubey, supal.dubey@gmail.com
+ * A core Android SQLite ORM framrwork build for speed and raw execution.
+ * Copyright (c) 2014  CubeStack. Version built for Flash Back..
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),

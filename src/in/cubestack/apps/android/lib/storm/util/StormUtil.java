@@ -1,9 +1,4 @@
-package in.cubestack.apps.android.lib.storm.core;
-
-import java.util.HashMap;
-import java.util.Map;
-
-
+package in.cubestack.apps.android.lib.storm.util;
 
 
 /**
@@ -28,25 +23,16 @@ import java.util.Map;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class AliasGenerator {
+public class StormUtil {
 
-	private int counter = 0;
-	
-	private Map<Class<?>, String> aliasMap = new HashMap<>();
-	
-	public String generateAlias(Class<?> clazz) {
-		if(aliasMap.containsKey(clazz)) {
-			return aliasMap.get(clazz);
-		}
-		
-		String name = clazz.getSimpleName();
-		
-		if(name.length() > 5) {
-			name = name.substring(0, 2) + name.substring(name.length() - 4,name.length()-1) + ++counter;
-		} else {
-			name = name + ++counter ;
-		}
-		aliasMap.put(clazz, name);
-		return name;
-	}
+    public static int safeParse(String intStr) {
+    	if(intStr != null) {
+    		try {
+    			return Integer.parseInt(intStr);
+    		} catch(Exception exception) {
+    			// Number format
+    		}
+    	}
+    	return 0;
+    }
 }
