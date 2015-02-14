@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="DefaultLocale">
+        <ignore path="src/in/cubestack/apps/android/lib/storm/criteria/LikeRestriction.java" />
+        <ignore path="src/in/cubestack/apps/android/lib/storm/service/Tablegenerator.java" />
+    </issue>
+</lint>
