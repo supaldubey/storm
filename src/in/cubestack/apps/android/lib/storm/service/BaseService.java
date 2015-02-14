@@ -238,6 +238,25 @@ public class BaseService {
     }
     
     
+    public List<Object> project(Class<?> type, Restriction restriction, Projection projection) throws Exception {
+        Cursor cursor = null;
+        List<Object> returnList = new ArrayList<Object>();
+        RowMapper<List<String>> mapper =  new RawRowMapper();
+        try {
+            TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
+            
+            String query = new QueryGenerator().rawQuery(tableInformation, restriction, projection);
+            Log.i("SQUER_QUERY: ", query);
+            cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
+            while (cursor.moveToNext()) {
+                returnList.add(mapper.map(cursor, tableInformation));
+            }
+        } finally {
+            closeSafe(cursor, false);
+        }
+        return returnList;
+    }
+    
     public <E> List<E> find(Class<E> type, Restriction restriction) throws Exception {
         Cursor cursor = null;
         List<E> returnList = new ArrayList<E>();
