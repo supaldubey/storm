@@ -23,7 +23,6 @@ import in.cubestack.apps.android.lib.storm.util.Reflections;
 import in.cubestack.apps.android.lib.storm.util.StormUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -250,27 +249,16 @@ public class BaseService implements StormService {
     				}
     			}
     			if(isDeletion) {
-    				Object relation = Reflections.getFieldValue(entity, relationMetaData.getProperty());
-    				if(relation != null) {
-    					// We need to delete this.
-    					if(relation instanceof Collection<?>) {
-    						Collection<?> relColl = (Collection<?>) relation;
-    						if(! relColl.isEmpty()) {
-    							for(Object obj: relColl) {
-    								delete(obj);
-    							}
-    						}
-    					} else {
-    						delete(relation);
-    					}
-    				}
+    				TableInformation relatedTableInfo = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
+    				ColumnMetaData columnMetaData = tableInformation.getColumnMetaData(relationMetaData.getJoinColumn());
+    				dbHelper.getWritableDatabase().delete(relatedTableInfo.getTableName(), columnMetaData.getColumnName() + CONDITION, new String[] {StormUtil.getSafe(Reflections.getFieldValue(entity, relationMetaData.getJoinColumn()))});
     			}
     		}
     	}
     }
     
     
-    @Override
+	@Override
 	public List<Object> project(Class<?> type, Restriction restriction, Projection projection) throws Exception {
         Cursor cursor = null;
         List<Object> returnList = new ArrayList<Object>();

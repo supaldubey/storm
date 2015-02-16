@@ -35,4 +35,11 @@ public class StormUtil {
     	}
     	return 0;
     }
+
+	public static String getSafe(Object fieldValue) {
+		if(fieldValue != null) {
+			return fieldValue.toString();
+		}
+		return null;
+	}
 }
