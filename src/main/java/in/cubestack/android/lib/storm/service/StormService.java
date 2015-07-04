@@ -70,4 +70,6 @@ public interface StormService {
 	public <E> int count(Class<E> type, Restriction restriction)
 			throws Exception;
 
+	<E> List<E>  findAll(Class<E> type) throws Exception;
+
 }

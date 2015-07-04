@@ -61,7 +61,7 @@ public class BaseService implements StormService {
     private static SQLiteOpenHelper  dbHelper;
     public static final String CONDITION = " = ? ";
 
-    private BaseService(Context context, DatabaseMetaData databaseMetaData) {
+    public BaseService(Context context, DatabaseMetaData databaseMetaData) {
         dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
     }
 
@@ -277,6 +277,28 @@ public class BaseService implements StormService {
         }
         return returnList;
     }
+	
+	@Override
+	public <E> List<E> findAll(Class<E> type) throws Exception {
+        Cursor cursor = null;
+        List<E> returnList = new ArrayList<E>();
+        RowMapper<E> mapper =  new ReflectionRowMapper<E>(type);
+        try {
+            TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
+            Restriction restriction = restrictionsFor(type).notNull(tableInformation.getPrimaryKeyData().getAlias());
+            
+            String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
+            Log.i("SQUER_QUERY: ", query);
+            cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
+            while (cursor.moveToNext()) {
+                returnList.add((E)mapper.map(cursor, tableInformation));
+            }
+        } finally {
+            closeSafe(cursor, false);
+        }
+        return returnList;
+    }
+    
     
     @Override
 	public <E> List<E> find(Class<E> type, Restriction restriction) throws Exception {
