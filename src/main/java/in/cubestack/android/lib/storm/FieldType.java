@@ -32,7 +32,7 @@ public enum FieldType {
     INTEGER ,
     TEXT ,
     REAL,
-    OBJECT ;
+    OBJECT, LONG ;
 
     public String getEscapeString() {
         return "''";

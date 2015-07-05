@@ -37,6 +37,7 @@ public class RelationMetaDataReader {
 		relationMetaData.setProperty(field.getName());
 		relationMetaData.setFetchType(relation.fetchType());
 		relationMetaData.setTargetEntity(relation.targetEntity());
+		relationMetaData.setBackingImplementation(field.getType());
 		return relationMetaData;
 	}
 }

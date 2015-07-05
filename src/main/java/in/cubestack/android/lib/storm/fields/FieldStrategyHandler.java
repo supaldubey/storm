@@ -37,7 +37,8 @@ public class FieldStrategyHandler {
 	
 	static {
 		STRATEGY.put(FieldType.REAL, new RealFieldHandler());
-		STRATEGY.put(FieldType.INTEGER, new RealFieldHandler());
+		STRATEGY.put(FieldType.INTEGER, new IntFieldHandler());
+		STRATEGY.put(FieldType.LONG, new LongFieldHandler());
 	}
 	
 	public static FieldHandler handlerFor(FieldType fieldType) {

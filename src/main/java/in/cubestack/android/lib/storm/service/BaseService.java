@@ -239,7 +239,7 @@ public class BaseService implements StormService {
     }
     
     private <E> void handleOrphans(E entity, TableInformation tableInformation) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, Exception {
-    	if(tableInformation.isRelational()) {
+    	if(! tableInformation.isNotRelational()) {
     		for(RelationMetaData relationMetaData: tableInformation.getRelations()) {
     			boolean isDeletion = false;
     			for(CascadeTypes cascadeTypes: relationMetaData.getCascadeTypes()) {

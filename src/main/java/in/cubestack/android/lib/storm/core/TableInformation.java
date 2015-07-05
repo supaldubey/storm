@@ -115,7 +115,7 @@ public class TableInformation {
 		this.handler = class1;
 	}
 
-	public boolean isRelational() {
+	public boolean isNotRelational() {
 		return relations == null || relations.isEmpty();
 	}
 

@@ -64,8 +64,10 @@ public class QueryGenerator {
 	    		 }
 	    	 }
    	 	}
-		// Trim last comma
-		sql.substring(0, sql.length() -2);
+		
+		//	 	Remove the comma
+		sql = new StringBuilder(sql.substring(0, sql.length() -1));
+	
 		sql.append(FROM).append(information.getTableName() ).append(SPACE).append(information.getAlias());
 		
 		for(RelationMetaData relationMetaData: information.getRelations()) {
@@ -81,6 +83,8 @@ public class QueryGenerator {
 			}
 		}
 		
+		
+		
 		// Append Restrictions
 		sql.append(WHERE);
 		sql.append(restriction.toSqlString());
@@ -92,7 +96,7 @@ public class QueryGenerator {
 				sql.append(column).append(COMMA);
 			}
 			// Trim last comma
-			sql.substring(0, sql.length() -2);
+			sql = new StringBuilder(sql.substring(0, sql.length() -1));
 		}
 		return sql.toString();
 	}
@@ -122,10 +126,8 @@ public class QueryGenerator {
 			 for(SQLFunction sqlFunction: projection.getAggregateFunctions()) {
 				 builder.append(sqlFunction.toSqlString()).append(COMMA);
 			 }
-			 builder.substring(0, builder.length() -2);
 		 }
-	    builder.substring(0, builder.length() -2);
     }
-
+    	
 }
 
