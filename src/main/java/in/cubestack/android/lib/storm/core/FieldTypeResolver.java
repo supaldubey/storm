@@ -1,12 +1,14 @@
 /**
  * 
  */
-package in.cubestack.android.lib.storm.fields;
+package in.cubestack.android.lib.storm.core;
 
 import in.cubestack.android.lib.storm.FieldType;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * A core Android SQLite ORM framrwork build for speed and raw execution.
@@ -30,22 +32,31 @@ import java.util.Map;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class FieldStrategyHandler {
+public class FieldTypeResolver {
+	
+	private static final List<FieldType> INT_TYPES = Arrays.asList(new FieldType[] {FieldType.INTEGER, FieldType.LONG});
+	private static final List<FieldType> FLOATING_TYPES = Arrays.asList(new FieldType[] {FieldType.DOUBLE, FieldType.REAL});
 
-	private static final Map<FieldType, FieldHandler> STRATEGY = new HashMap<FieldType, FieldHandler>();
-	private static FieldHandler defaultHandler = new FieldHandler(); 
 	
-	static {
-		STRATEGY.put(FieldType.REAL, new RealFieldHandler());
-		STRATEGY.put(FieldType.INTEGER, new IntFieldHandler());
-		STRATEGY.put(FieldType.LONG, new LongFieldHandler());
-		STRATEGY.put(FieldType.DOUBLE, new DoubleFieldHandler());
-	}
-	
-	public static FieldHandler handlerFor(FieldType fieldType) {
-		if(STRATEGY.containsKey(fieldType)) {
-			return STRATEGY.get(fieldType);
+	public FieldType fetchMatching(Field field, FieldType fieldType) {
+		if(INT_TYPES.contains(fieldType)) {
+			if(field.getType().getSimpleName().equalsIgnoreCase(Long.class.getSimpleName())) {
+				return FieldType.LONG;
+			} else {
+				return FieldType.INTEGER;
+			}
 		}
-		return defaultHandler;
+		
+		if(FLOATING_TYPES.contains(fieldType)) {
+			if(field.getType().getSimpleName().equalsIgnoreCase(Float.class.getSimpleName())) {
+				return FieldType.REAL;
+			} else if(field.getType().getSimpleName().equalsIgnoreCase(Double.class.getSimpleName())) {
+				return FieldType.DOUBLE;
+			}
+		}
+		
+		//Return default
+		return fieldType;
 	}
+
 }

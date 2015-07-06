@@ -1,12 +1,7 @@
-/**
- * 
- */
 package in.cubestack.android.lib.storm.fields;
 
-import in.cubestack.android.lib.storm.FieldType;
+import android.database.Cursor;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A core Android SQLite ORM framrwork build for speed and raw execution.
@@ -30,22 +25,22 @@ import java.util.Map;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class FieldStrategyHandler {
+public class DoubleFieldHandler extends FieldHandler {
 
-	private static final Map<FieldType, FieldHandler> STRATEGY = new HashMap<FieldType, FieldHandler>();
-	private static FieldHandler defaultHandler = new FieldHandler(); 
-	
-	static {
-		STRATEGY.put(FieldType.REAL, new RealFieldHandler());
-		STRATEGY.put(FieldType.INTEGER, new IntFieldHandler());
-		STRATEGY.put(FieldType.LONG, new LongFieldHandler());
-		STRATEGY.put(FieldType.DOUBLE, new DoubleFieldHandler());
+	@Override
+	public Object getValue(Cursor cursor, int columnIndex){
+		return cursor.getDouble(columnIndex);
 	}
 	
-	public static FieldHandler handlerFor(FieldType fieldType) {
-		if(STRATEGY.containsKey(fieldType)) {
-			return STRATEGY.get(fieldType);
+	public String buildSqlString(String columnName, String symbol, Object value) {
+		StringBuilder sql = new StringBuilder();
+		if(value == null) {
+			sql.append(columnName).append(IS_NULL);
+		} else {
+			sql.append(columnName).append(SPACE).append(symbol).append(SPACE).append(value);
 		}
-		return defaultHandler;
+		
+		return sql.toString();
 	}
+
 }

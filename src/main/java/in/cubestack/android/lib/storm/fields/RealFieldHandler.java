@@ -29,7 +29,7 @@ public class RealFieldHandler extends FieldHandler {
 
 	@Override
 	public Object getValue(Cursor cursor, int columnIndex){
-		return cursor.getDouble(columnIndex);
+		return cursor.getFloat(columnIndex);
 	}
 	
 	public String buildSqlString(String columnName, String symbol, Object value) {

@@ -39,6 +39,8 @@ import java.util.LinkedList;
  * SOFTWARE.
  */
 public class MetaDataReader {
+	
+	private FieldTypeResolver fieldTypeResolver = new FieldTypeResolver();
     private TableInformation tableInformation = new TableInformation();
     
     // Alias must be specific to a mapped Entity
@@ -111,7 +113,7 @@ public class MetaDataReader {
         columnMetaData.setAlias(alias);
         columnMetaData.setColumnName(columnName);
         FieldType fieldType = column.type();
-        columnMetaData.setFiledTypes(fieldType);
+        columnMetaData.setFiledTypes(fieldTypeResolver.fetchMatching(field, fieldType));
         columnMetaData.setAddedVersion(column.addedVersion());
         return columnMetaData;
     }
