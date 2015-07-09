@@ -29,7 +29,7 @@ public class FieldHandler {
 
 	protected static final String SPACE = " ";
 	protected static final String IS_NULL = " IS NULL";
-	private static final String QUESTION_MARK = " ? " ;
+	public static final String QUESTION_MARK = " ? " ;
 
 	public Object getValue(Cursor cursor, int columnIndex){
 		return cursor.getString(columnIndex);

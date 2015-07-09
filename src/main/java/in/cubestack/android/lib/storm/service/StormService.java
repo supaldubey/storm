@@ -54,8 +54,6 @@ public interface StormService {
 	 */
 	public <E> E findById(Class<E> type, long id) throws Exception;
 
-	public <E> int truncateTable(E entity) throws Exception;
-
 	public <E> int delete(E entity) throws Exception;
 
 	public List<Object> project(Class<?> type, Restriction restriction,
@@ -71,5 +69,9 @@ public interface StormService {
 			throws Exception;
 
 	<E> List<E>  findAll(Class<E> type) throws Exception;
+
+	<E> int  truncateTable(Class<E> type) throws Exception;
+
+	<E> int delete(Class<E> type, Restriction restriction) throws Exception;
 
 }

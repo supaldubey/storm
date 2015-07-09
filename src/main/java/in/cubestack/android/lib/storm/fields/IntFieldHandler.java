@@ -38,7 +38,7 @@ public class IntFieldHandler extends FieldHandler {
 		if(value == null) {
 			sql.append(columnName).append(IS_NULL);
 		} else {
-			sql.append(columnName).append(SPACE).append(symbol).append(SPACE).append(value);
+			sql.append(columnName).append(SPACE).append(symbol).append(SPACE).append(QUESTION_MARK);
 		}
 		
 		return sql.toString();

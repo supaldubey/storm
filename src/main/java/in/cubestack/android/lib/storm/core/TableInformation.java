@@ -36,7 +36,7 @@ public class TableInformation {
     private String tableName;
     private ColumnMetaData primaryKeyData;
     private List<ColumnMetaData> columnMetaDataList = new LinkedList<ColumnMetaData>();
-    private List<RelationMetaData> relations;
+    private List<RelationMetaData> relations = new LinkedList<RelationMetaData>();
     private String alias;
     private LifeCycleHandler<?> handler;
     
