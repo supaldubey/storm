@@ -94,7 +94,7 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
 			handler = (LifeCycleHandler<E>) tableInformation.getHandler();
-
+			dbHelper.getWritableDatabase().beginTransaction();
 			if (handler == null || handler.preSave(entity)) {
 				long id = dbHelper.getWritableDatabase().insert(tableInformation.getTableName(), null, generateContentValues(entity));
 				Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
@@ -104,9 +104,9 @@ public class BaseService implements StormService {
 
 			}
 			saveKids(entity, tableInformation);
-
+			dbHelper.getWritableDatabase().setTransactionSuccessful();
+			
 		} catch (Exception throwable) {
-			throwable.printStackTrace();
 			if (handler != null) {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, throwable);
 			} else {
@@ -285,7 +285,6 @@ public class BaseService implements StormService {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_DELETE).execute(entity, null);
 			}
 		} catch (Exception throwable) {
-			throwable.printStackTrace();
 			if (handler != null) {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_DELETE).execute(entity, throwable);
 			} else {
