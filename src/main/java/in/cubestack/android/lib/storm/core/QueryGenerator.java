@@ -50,6 +50,17 @@ public class QueryGenerator {
 		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection); 
 	}
 	
+	public String deleteRawQuery(TableInformation tableInformation, Restriction restriction) {
+		return new StringBuilder("DELETE ")
+				.append(FROM)
+				.append(tableInformation.getTableName())
+				.append(SPACE)
+				.append(tableInformation.getAlias())
+				.append(WHERE)
+				.append(restriction.toSqlString())
+				.toString();
+	}
+	
 	public String rawQuery(TableInformation information, Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(SELECT_INIT);

@@ -65,6 +65,10 @@ public class BaseService implements StormService {
 	public BaseService(Context context, DatabaseMetaData databaseMetaData) {
 		dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
 	}
+	
+	public BaseService(Context context, DatabaseMetaData databaseMetaData, SQLiteOpenHelper helper) {
+		dbHelper = helper;
+	}
 
 	@Override
 	public <E> Projection projectionFor(Class<E> entity) throws StormException {
@@ -91,24 +95,18 @@ public class BaseService implements StormService {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
 			handler = (LifeCycleHandler<E>) tableInformation.getHandler();
 
-			Object primaryKey = Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias());
-
-			if (primaryKey != null && !primaryKey.toString().equals("0")) {
-				update(entity);
-			} else {
-
-				if (handler == null || handler.preSave(entity)) {
-					long id = dbHelper.getWritableDatabase().insert(tableInformation.getTableName(), null, generateContentValues(entity));
-					Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
-					if (handler != null) {
-						new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, null);
-					}
-
+			if (handler == null || handler.preSave(entity)) {
+				long id = dbHelper.getWritableDatabase().insert(tableInformation.getTableName(), null, generateContentValues(entity));
+				Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
+				if (handler != null) {
+					new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, null);
 				}
+
 			}
 			saveKids(entity, tableInformation);
 
 		} catch (Exception throwable) {
+			throwable.printStackTrace();
 			if (handler != null) {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, throwable);
 			} else {
@@ -133,12 +131,18 @@ public class BaseService implements StormService {
 				}
 				if (create) {
 					if (relationMetaData.isCollectionBacked()) {
-						for (Object obj : (Collection<Object>) Reflections.getFieldValue(entity, relationMetaData.getAlias())) {
+						if(Reflections.getFieldValue(entity, relationMetaData.getProperty()) == null) {
+							// No Kids, The End;
+							return;
+						}
+						for (Object obj : (Collection<Object>) Reflections.getFieldValue(entity, relationMetaData.getProperty())) {
 							save(obj, true);
 						}
 					} else {
 						Object kid = Reflections.getFieldValue(entity, relationMetaData.getAlias());
-						save(kid, true);
+						if(kid != null) {
+							save(kid, true);
+						}
 					}
 				}
 			}
@@ -250,15 +254,12 @@ public class BaseService implements StormService {
 		int recordsUpdated = 0;
 		try {
 
-			List<E> deletions = find(type, restriction);
-			if (deletions != null && !deletions.isEmpty()) {
-				dbHelper.getWritableDatabase().beginTransaction();
-				for (E delete : deletions) {
-					delete(delete, true);
-				}
-				dbHelper.getWritableDatabase().setTransactionSuccessful();
-				dbHelper.getWritableDatabase().endTransaction();
-			}
+			dbHelper.getWritableDatabase().beginTransaction();
+			
+			dbHelper.getWritableDatabase().execSQL(new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(type), restriction));
+			
+			dbHelper.getWritableDatabase().setTransactionSuccessful();
+			dbHelper.getWritableDatabase().endTransaction();
 
 		} finally {
 			closeSafe(null, false);
@@ -273,9 +274,10 @@ public class BaseService implements StormService {
 		try {
 
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
-			handleOrphans(entity, tableInformation);
+			
 			handler = (LifeCycleHandler<E>) tableInformation.getHandler();
 			if (handler == null || handler.preDelete(entity)) {
+				handleOrphans(entity, tableInformation);
 				recordsUpdated = dbHelper.getWritableDatabase().delete(tableInformation.getTableName(), generateWhereId(tableInformation),
 						generateWhereVal(entity));
 			}
@@ -283,6 +285,7 @@ public class BaseService implements StormService {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_DELETE).execute(entity, null);
 			}
 		} catch (Exception throwable) {
+			throwable.printStackTrace();
 			if (handler != null) {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_DELETE).execute(entity, throwable);
 			} else {
@@ -311,10 +314,9 @@ public class BaseService implements StormService {
 					}
 				}
 				if (isDeletion) {
-					TableInformation relatedTableInfo = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
-					ColumnMetaData columnMetaData = tableInformation.getColumnMetaData(relationMetaData.getJoinColumn());
-					dbHelper.getWritableDatabase().delete(relatedTableInfo.getTableName(), columnMetaData.getColumnName() + CONDITION,
-							new String[] { StormUtil.getSafe(Reflections.getFieldValue(entity, relationMetaData.getJoinColumn())) });
+					delete(relationMetaData.getTargetEntity(), 
+							restrictionsFor(relationMetaData.getTargetEntity())
+								.equals(relationMetaData.getJoinColumn(), Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias())));
 				}
 			}
 		}

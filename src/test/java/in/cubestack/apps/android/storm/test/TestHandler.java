@@ -6,7 +6,7 @@ public class TestHandler implements LifeCycleHandler<TestEntity>{
 
 	@Override
 	public boolean preSave(TestEntity entity) {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -16,7 +16,7 @@ public class TestHandler implements LifeCycleHandler<TestEntity>{
 
 	@Override
 	public boolean preDelete(TestEntity entity) {
-		return false;
+		return true;
 	}
 
 	@Override

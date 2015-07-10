@@ -140,4 +140,18 @@ public class TableInformation {
         }
         return null;
     }
+	
+	
+	public String getProperty(String columnNme) {
+		if (getPrimaryKeyData().getColumnName().equals(columnNme)) {
+            return getPrimaryKeyData().getAlias();
+        }
+        for (ColumnMetaData columnMetaData : getColumnMetaDataList()) {
+            if (columnMetaData.getColumnName().equals(columnNme)) {
+                return columnMetaData.getAlias();
+            }
+        }
+        return null;
+    }
+	
 }
