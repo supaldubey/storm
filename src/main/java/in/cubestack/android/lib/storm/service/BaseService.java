@@ -66,8 +66,8 @@ public class BaseService implements StormService {
 		dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
 	}
 	
-	public BaseService(Context context, DatabaseMetaData databaseMetaData, SQLiteOpenHelper helper) {
-		dbHelper = helper;
+	
+	public  BaseService() {
 	}
 
 	@Override

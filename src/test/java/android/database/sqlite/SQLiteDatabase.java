@@ -57,4 +57,6 @@ public class SQLiteDatabase {
 	public static final int ENABLE_WRITE_AHEAD_LOGGING = 536870912;
 	public static final int MAX_SQL_CACHE_SIZE = 100;
 
+	public class CursorFactory {}
+	
 }

@@ -9,10 +9,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import in.cubestack.android.lib.storm.core.MetaDataReader;
 import in.cubestack.android.lib.storm.service.BaseService;
 import in.cubestack.android.lib.storm.service.StormService;
-import in.cubestack.apps.android.storm.test.CoreDatabase;
+import in.cubestack.android.lib.storm.util.Reflections;
 import in.cubestack.apps.android.storm.test.MockSQLiteHelper;
 import in.cubestack.apps.android.storm.test.TestChild;
 import in.cubestack.apps.android.storm.test.TestEntity;
@@ -27,8 +26,9 @@ public class CRUDTest {
 	private TestEntity entity;
 
 	@Before
-	public void set() {
-		stormService = new BaseService(null, new MetaDataReader().fetchDatabaseMetaData(CoreDatabase.class), new MockSQLiteHelper());
+	public void set() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+		stormService = new BaseService();
+		Reflections.setField(stormService, "dbHelper", new MockSQLiteHelper(null, "MOCK", null, 0));
 		entity = new TestEntity();
 		entity.setId(1);
 		entity.setName(2332);
