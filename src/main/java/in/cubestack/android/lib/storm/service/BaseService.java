@@ -67,8 +67,6 @@ public class BaseService implements StormService {
 	}
 	
 	
-	public  BaseService() {
-	}
 
 	@Override
 	public <E> Projection projectionFor(Class<E> entity) throws StormException {
@@ -94,7 +92,9 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
 			handler = (LifeCycleHandler<E>) tableInformation.getHandler();
-			dbHelper.getWritableDatabase().beginTransaction();
+			if(!retain) {
+				dbHelper.getWritableDatabase().beginTransaction();
+			}
 			if (handler == null || handler.preSave(entity)) {
 				long id = dbHelper.getWritableDatabase().insert(tableInformation.getTableName(), null, generateContentValues(entity));
 				Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
@@ -104,7 +104,9 @@ public class BaseService implements StormService {
 
 			}
 			saveKids(entity, tableInformation);
-			dbHelper.getWritableDatabase().setTransactionSuccessful();
+			if(!retain) {
+				dbHelper.getWritableDatabase().setTransactionSuccessful();
+			}
 			
 		} catch (Exception throwable) {
 			if (handler != null) {
@@ -136,11 +138,13 @@ public class BaseService implements StormService {
 							return;
 						}
 						for (Object obj : (Collection<Object>) Reflections.getFieldValue(entity, relationMetaData.getProperty())) {
+							Reflections.setField(obj, relationMetaData.getJoinColumn(), Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
 							save(obj, true);
 						}
 					} else {
 						Object kid = Reflections.getFieldValue(entity, relationMetaData.getAlias());
 						if(kid != null) {
+							Reflections.setField(kid, relationMetaData.getJoinColumn(), Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
 							save(kid, true);
 						}
 					}

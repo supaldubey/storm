@@ -76,17 +76,19 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 		ColumnMetaData metaData = tableInformation.getPrimaryKeyData();
 
 		Object priyamryKeyVal = Reflections.getFieldValue(instance, tableInformation.getPrimaryKeyData().getAlias());
-
+		int initialColumnIndex = columnIndex;
 		// Start mappping relations. .
 		if (!tableInformation.isNotRelational()) {
 			int relationsMapper = 0;
 			do {
 				Object primaryKeyNext = FieldStrategyHandler.handlerFor(metaData.getFiledTypes()).getValue(cursor, 0);
 				if (priyamryKeyVal.equals(primaryKeyNext)) {
+					//Reset once Relations are mapped.
+					columnIndex = initialColumnIndex;
 					relationsMapper ++;
 					for (RelationMetaData relationMetaData : tableInformation.getRelations()) {
 						if (relationMetaData.getFetchType() == FetchType.EAGER) {
-							mapRelation(relationMetaData, cursor, instance, columnIndex);
+							columnIndex = mapRelation(relationMetaData, cursor, instance, columnIndex);
 						}
 					}
 				} else {
@@ -100,25 +102,28 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void mapRelation(RelationMetaData relationMetaData, Cursor cursor, E instance, int columnIndex) throws SecurityException, NoSuchFieldException,
+	private int mapRelation(RelationMetaData relationMetaData, Cursor cursor, E instance, int columnIndex) throws SecurityException, NoSuchFieldException,
 			IllegalArgumentException, IllegalAccessException, InstantiationException {
 		String prop = relationMetaData.getProperty();
 		Object entity = relationMetaData.getTargetEntity().newInstance();
 
 		TableInformation tableInformation = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
 
-		ColumnMetaData metaData = tableInformation.getPrimaryKeyData();
-		Reflections.setField(entity, metaData.getAlias(), FieldStrategyHandler.handlerFor(metaData.getFiledTypes()).getValue(cursor, columnIndex++));
+		ColumnMetaData primaryKeyMetaData = tableInformation.getPrimaryKeyData();
+		Object primaryKey = FieldStrategyHandler.handlerFor(primaryKeyMetaData.getFiledTypes()).getValue(cursor, columnIndex++);
+		Reflections.setField(entity, primaryKeyMetaData.getAlias(), primaryKey);
 
 		for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
 			Reflections.setField(entity, columnMetaData.getAlias(), FieldStrategyHandler.handlerFor(columnMetaData.getFiledTypes()).getValue(cursor, columnIndex++));
 		}
+		
+		Object valInstance  = Reflections.getFieldValue(instance, prop);
 
-		if (Reflections.getFieldValue(instance, prop) == null) {
+		if (valInstance == null) {
 			// Instantiate and set
 			if (relationMetaData.isCollectionBacked()) {
 				Reflections.setField(instance, prop, relationMetaData.getBackingImplementation().newInstance());
-				Collection<Object> xCOl = (Collection<Object>) Reflections.getFieldValue(instance, prop);
+				Collection<Object> xCOl = (Collection<Object>) valInstance;
 				xCOl.add(entity);
 			} else {
 				Reflections.setField(instance, prop, entity);
@@ -126,9 +131,35 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 		} else {
 			if (relationMetaData.isCollectionBacked()) {
 				Collection<Object> xCOl = (Collection<Object>) Reflections.getFieldValue(instance, prop);
-				xCOl.add(entity);
+				if(!exists(valInstance, entity, relationMetaData)) {
+					xCOl.add(entity);
+				}
+			} else {
+				if(!exists(valInstance, entity, relationMetaData)) {
+					Reflections.setField(instance, prop, entity);
+				}
 			}
 		}
+		return columnIndex;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private boolean exists(Object valInstance, Object entity, RelationMetaData metaData) throws IllegalArgumentException, IllegalAccessException, InstantiationException, SecurityException, NoSuchFieldException {
+		TableInformation information = EntityMetaDataCache.getMetaData(entity.getClass());
+		String primaryKeyAlias = information.getPrimaryKeyData().getAlias();
+		if(metaData.isCollectionBacked()) {
+			for(Object oneIns: (Collection<Object>)valInstance) {
+				if(Reflections.getFieldValue(oneIns, primaryKeyAlias).equals(Reflections.getFieldValue(entity, primaryKeyAlias))) {
+					return true;
+				}
+			}
+		} else {
+			if(Reflections.getFieldValue(valInstance, primaryKeyAlias).equals(Reflections.getFieldValue(entity, primaryKeyAlias))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public E map(Cursor cursor, TableInformation tableInformation) {
