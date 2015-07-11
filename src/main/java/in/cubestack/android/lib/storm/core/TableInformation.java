@@ -39,6 +39,7 @@ public class TableInformation {
     private List<RelationMetaData> relations = new LinkedList<RelationMetaData>();
     private String alias;
     private LifeCycleHandler<?> handler;
+    private String insertSql;
     
     
 	public String getTableName() {
@@ -115,8 +116,8 @@ public class TableInformation {
 		this.handler = class1;
 	}
 
-	public boolean isNotRelational() {
-		return relations == null || relations.isEmpty();
+	public boolean isRelational() {
+		return relations != null && ! relations.isEmpty();
 	}
 
 	
@@ -153,5 +154,13 @@ public class TableInformation {
         }
         return null;
     }
+
+	public String getInsertSql() {
+		return insertSql;
+	}
+
+	public void setInsertSql(String insertSql) {
+		this.insertSql = insertSql;
+	}
 	
 }

@@ -31,6 +31,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 /**
@@ -61,9 +62,12 @@ public class BaseService implements StormService {
 
 	private static SQLiteOpenHelper dbHelper;
 	public static final String CONDITION = " = ? ";
+	
+	private StatementCache statementCache;
 
 	public BaseService(Context context, DatabaseMetaData databaseMetaData) {
 		dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
+		statementCache = new StatementCache();
 	}
 	
 	
@@ -96,7 +100,25 @@ public class BaseService implements StormService {
 				dbHelper.getWritableDatabase().beginTransaction();
 			}
 			if (handler == null || handler.preSave(entity)) {
-				long id = dbHelper.getWritableDatabase().insert(tableInformation.getTableName(), null, generateContentValues(entity));
+				
+				SQLiteStatement statement = statementCache.fetch(entity.getClass());
+				if(statement == null) {
+					statement = dbHelper.getWritableDatabase().compileStatement(tableInformation.getInsertSql());
+					statementCache.set(entity.getClass(), statement);
+				}
+				
+				statement.clearBindings();
+				int index = 1;
+				for(ColumnMetaData columnMetaData: tableInformation.getColumnMetaDataList()) {
+					Object obj = Reflections.getFieldValue(entity, columnMetaData.getAlias());
+					if (obj != null) {
+						statement.bindString(index++, obj.toString());
+					} else {
+						statement.bindString(index++, "");
+					}
+				}
+				
+				long id = statement.executeInsert();
 				Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
 				if (handler != null) {
 					new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, null);
@@ -121,7 +143,7 @@ public class BaseService implements StormService {
 
 	@SuppressWarnings("unchecked")
 	private <E> void saveKids(E entity, TableInformation tableInformation) throws Exception {
-		if (!tableInformation.isNotRelational()) {
+		if (tableInformation.isRelational()) {
 			boolean create = false;
 			for (RelationMetaData relationMetaData : tableInformation.getRelations()) {
 
@@ -307,7 +329,7 @@ public class BaseService implements StormService {
 
 	private <E> void handleOrphans(E entity, TableInformation tableInformation)
 			throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, Exception {
-		if (!tableInformation.isNotRelational()) {
+		if (tableInformation.isRelational()) {
 			for (RelationMetaData relationMetaData : tableInformation.getRelations()) {
 				boolean isDeletion = false;
 				for (CascadeTypes cascadeTypes : relationMetaData.getCascadeTypes()) {
@@ -467,6 +489,10 @@ public class BaseService implements StormService {
 				cursor.close();
 			}
 			if (!retainConnection) {
+				if(dbHelper.getWritableDatabase().inTransaction()) {
+					//Unlock Transaction in casse of errors
+					dbHelper.getWritableDatabase().endTransaction();
+				}
 				dbHelper.close();
 			}
 		} catch (Exception ex) {

@@ -26,7 +26,7 @@ import java.util.List;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class CompositeRestriction  implements Restriction {
+public class CompositeRestriction extends PageableRestriction {
 	
 	private static final char OPENING_BRACES = '(';
 	private static final char CLOSING_BRACES = ')';

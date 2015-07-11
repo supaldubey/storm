@@ -48,4 +48,6 @@ public interface Restrictions {
 	Restriction isNull(String property);
 
 	Restriction notNull(String property);
+	
+	Restriction forAll();
 }

@@ -30,4 +30,9 @@ public interface Restriction {
 	public String toSqlString();
 	boolean valueStored();
 	String[] values();
+	Restriction page(int page);
+	
+	Restriction limit(int offset, int limit);
+	
+	public Object sqlString();
 }

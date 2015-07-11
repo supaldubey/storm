@@ -87,7 +87,12 @@ public class StormRestrictions implements Restrictions {
 
 	@Override
 	public Projection projection() {
-		return null;
+		return new StormProjection(tableInformation);
+	}
+
+	@Override
+	public Restriction forAll() {
+		return new NullBasedRestriction(tableInformation.getPrimaryKeyData().getAlias(), false, tableInformation);
 	}
 
 }

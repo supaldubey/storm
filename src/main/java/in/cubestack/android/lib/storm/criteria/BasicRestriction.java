@@ -28,7 +28,7 @@ import in.cubestack.android.lib.storm.fields.FieldStrategyHandler;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class BasicRestriction implements Restriction {
+public class BasicRestriction extends PageableRestriction {
 	
 	private String property; 
 	private Object value;

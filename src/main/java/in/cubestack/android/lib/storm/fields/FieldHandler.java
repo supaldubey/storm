@@ -31,10 +31,10 @@ public class FieldHandler {
 	protected static final String IS_NULL = " IS NULL";
 	public static final String QUESTION_MARK = " ? " ;
 
-	public Object getValue(Cursor cursor, int columnIndex){
+	public Object getValue(Cursor cursor, int columnIndex) {
 		return cursor.getString(columnIndex);
 	}
-
+	
 	public String buildSqlString(String columnName, String symbol, Object value) {
 		StringBuilder sql = new StringBuilder();
 		if(value == null) {

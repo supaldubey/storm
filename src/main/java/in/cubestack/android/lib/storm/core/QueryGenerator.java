@@ -33,6 +33,7 @@ import in.cubestack.android.lib.storm.criteria.SQLFunction;
  */
 public class QueryGenerator {
 
+	private static final String INSERT_INTO = "INSERT INTO ";
 	private static final String GROUP_BY = " GROUP BY ";
 	private static final String WHERE = " WHERE ";
 	private static final String EQUALS = " = ";
@@ -43,6 +44,12 @@ public class QueryGenerator {
 	private static final char DOT = '.';
 	private static final char COMMA = ',';
 	private static final char SPACE = ' ';
+	private static final char OPEN_BRACES = '(';
+	private static final char CLOSE_BRACES = ')';
+	private static final String VALUES = " VALUES ( ";
+	private static final char QUESTION_MARK = '?';
+	
+	
 	private Class<?> entityClass;
 	
 	
@@ -98,7 +105,7 @@ public class QueryGenerator {
 		
 		// Append Restrictions
 		sql.append(WHERE);
-		sql.append(restriction.toSqlString());
+		sql.append(restriction.sqlString());
 		
 		//Append Group by clause in case available :)
 		if(projection != null  && !projection.getColumns().isEmpty()) {
@@ -139,6 +146,30 @@ public class QueryGenerator {
 			 }
 		 }
     }
+
+	public String insertQuery(TableInformation tableInformation) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+		StringBuilder insert = new StringBuilder(INSERT_INTO)
+				.append(tableInformation.getTableName())
+				.append(OPEN_BRACES);
+		
+		for(ColumnMetaData columnMetaData: tableInformation.getColumnMetaDataList()) {
+			 insert.append(columnMetaData.getColumnName()).append(COMMA);
+		 }
+		
+		insert = new StringBuilder(insert.substring(0, insert.length() -1));
+		
+		insert.append(CLOSE_BRACES).append(VALUES);
+		
+		for(int columns =0; columns < tableInformation.getColumnMetaDataList().size(); columns ++) {
+			insert.append(QUESTION_MARK).append(COMMA);
+		}
+		insert = new StringBuilder(insert.substring(0, insert.length() -1));
+		
+		//Primary Key 
+		return insert
+				.append(CLOSE_BRACES)
+				.toString();
+	}
     	
 }
 

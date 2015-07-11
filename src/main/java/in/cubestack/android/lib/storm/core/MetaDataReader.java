@@ -68,6 +68,7 @@ public class MetaDataReader {
         }
         
         setFields(annotation, aliasGenerator);
+        generateCreate();
         return tableInformation;
     }
 
@@ -92,6 +93,10 @@ public class MetaDataReader {
         }
         
 	}
+    
+    private void generateCreate() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+    	tableInformation.setInsertSql(new QueryGenerator().insertQuery(tableInformation));
+    }
 
 	public DatabaseMetaData fetchDatabaseMetaData(Class<?> databaseClass) {
         Database database = databaseClass.getAnnotation(Database.class);

@@ -78,7 +78,7 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 		Object priyamryKeyVal = Reflections.getFieldValue(instance, tableInformation.getPrimaryKeyData().getAlias());
 		int initialColumnIndex = columnIndex;
 		// Start mappping relations. .
-		if (!tableInformation.isNotRelational()) {
+		if (tableInformation.isRelational()) {
 			int relationsMapper = 0;
 			do {
 				Object primaryKeyNext = FieldStrategyHandler.handlerFor(metaData.getFiledTypes()).getValue(cursor, 0);

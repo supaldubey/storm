@@ -24,7 +24,7 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class LikeRestriction implements Restriction {
+public class LikeRestriction extends PageableRestriction {
 
 	private String property; 
 	private Object value;
