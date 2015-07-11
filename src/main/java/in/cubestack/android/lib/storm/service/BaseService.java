@@ -425,7 +425,7 @@ public class BaseService implements StormService {
 			cursor = dbHelper.getReadableDatabase().rawQuery(sql, restriction.values());
 
 			RowMapper<List<String>> mapper = new RawRowMapper();
-			if (cursor.moveToFirst()) {
+			if (cursor.getCount() > 0 && cursor.moveToFirst()) {
 				List<String> res = mapper.map(cursor, tableInfo);
 				if (res != null && res.size() > 0) {
 					String length = res.get(0);
