@@ -41,7 +41,7 @@ public class RawRowMapper implements RowMapper<List<String>> {
 	@Override
 	public List<String> map(Cursor cursor, TableInformation tableInformation) {
 		List<String> responseList = new LinkedList<String>();
-		for(int columnIndex=1; columnIndex<= cursor.getColumnCount(); columnIndex++) {
+		for(int columnIndex=0; columnIndex<= cursor.getColumnCount(); columnIndex++) {
 			responseList.add(cursor.getString(columnIndex));
 		}
 		return responseList;
