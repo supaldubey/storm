@@ -101,7 +101,7 @@ public class QueryGenerator {
 		sql.append(restriction.toSqlString());
 		
 		//Append Group by clause in case available :)
-		if(projection != null && !projection.getAggregateFunctions().isEmpty()) {
+		if(projection != null  && !projection.getColumns().isEmpty()) {
 			sql.append(GROUP_BY);
 			for(String column: projection.getColumns()) {
 				sql.append(column).append(COMMA);
