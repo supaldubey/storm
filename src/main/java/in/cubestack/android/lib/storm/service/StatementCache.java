@@ -26,5 +26,9 @@ public class StatementCache {
 	public void set(Class<?> type, SQLiteStatement liteStatement) {
 		STATEMENTS_CACHE.put(type, liteStatement);
 	}
+
+	public void clear() {
+		STATEMENTS_CACHE.clear();
+	}
 	
 }

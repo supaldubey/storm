@@ -128,6 +128,7 @@ public class BaseService implements StormService {
 			saveKids(entity, tableInformation);
 			if(!retain) {
 				dbHelper.getWritableDatabase().setTransactionSuccessful();
+				statementCache.clear();
 			}
 			
 		} catch (Exception throwable) {
@@ -489,6 +490,7 @@ public class BaseService implements StormService {
 				cursor.close();
 			}
 			if (!retainConnection) {
+				statementCache.clear();
 				if(dbHelper.getWritableDatabase().inTransaction()) {
 					//Unlock Transaction in casse of errors
 					dbHelper.getWritableDatabase().endTransaction();
