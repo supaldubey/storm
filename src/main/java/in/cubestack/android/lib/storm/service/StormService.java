@@ -74,4 +74,6 @@ public interface StormService {
 
 	<E> int delete(Class<E> type, Restriction restriction) throws Exception;
 
+	<E> int count(Class<E> type) throws Exception;
+
 }

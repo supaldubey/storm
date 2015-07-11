@@ -12,6 +12,7 @@ import java.util.List;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
 /**
@@ -42,7 +43,7 @@ public class StormDatabaseWrapper extends SQLiteOpenHelper {
 	private DatabaseMetaData metaData;
 
 	public StormDatabaseWrapper(Context context, DatabaseMetaData metaData) {
-        super(context, metaData.getName(), null, metaData.getVersion());
+        super(context, metaData.getName(), (CursorFactory)null, metaData.getVersion());
         this.metaData = metaData;
     }
 

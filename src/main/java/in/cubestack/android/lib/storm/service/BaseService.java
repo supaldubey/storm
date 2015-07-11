@@ -406,6 +406,13 @@ public class BaseService implements StormService {
 		return returnVal;
 	}
 
+	
+	@Override
+	public <E> int count(Class<E> type) throws Exception {
+		return count(type, restrictionsFor(type).notNull(EntityMetaDataCache.getMetaData(type).getPrimaryKeyData().getAlias()));
+	}
+	
+	
 	@Override
 	public <E> int count(Class<E> type, Restriction restriction) throws Exception {
 		Cursor cursor = null;
