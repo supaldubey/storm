@@ -117,14 +117,19 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 			Reflections.setField(entity, columnMetaData.getAlias(), FieldStrategyHandler.handlerFor(columnMetaData.getFiledTypes()).getValue(cursor, columnIndex++));
 		}
 		
+		//No Primary Key, hence never saved to database, do not fetch
+		if(primaryKey == null || "0".equals(primaryKey.toString())) {
+			return columnIndex;
+		}
+		
 		Object valInstance  = Reflections.getFieldValue(instance, prop);
 
 		if (valInstance == null) {
 			// Instantiate and set
 			if (relationMetaData.isCollectionBacked()) {
-				Reflections.setField(instance, prop, relationMetaData.getBackingImplementation().newInstance());
-				Collection<Object> xCOl = (Collection<Object>) valInstance;
+				Collection<Object> xCOl = (Collection<Object>) relationMetaData.getBackingImplementation().newInstance();
 				xCOl.add(entity);
+				Reflections.setField(instance, prop, xCOl);
 			} else {
 				Reflections.setField(instance, prop, entity);
 			}
