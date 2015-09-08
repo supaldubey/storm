@@ -42,7 +42,7 @@ public interface StormService {
 
 	public <E> int update(E entity) throws Exception;
 
-	public <E> void update(List<E> entities) throws Exception;
+	public <E> int update(List<E> entities) throws Exception;
 
 	/**
 	 * Probably this can be customized by calling the below method and passing a criteria.

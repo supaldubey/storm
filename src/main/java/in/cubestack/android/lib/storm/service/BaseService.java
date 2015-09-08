@@ -220,15 +220,17 @@ public class BaseService implements StormService {
 	}
 
 	@Override
-	public <E> void update(List<E> entities) throws Exception {
+	public <E> int update(List<E> entities) throws Exception {
 		long startTime = System.currentTimeMillis();
 		dbHelper.getWritableDatabase().beginTransaction();
+		int count = 0;
 		for (E e : entities) {
-			update(e, true);
+			count += update(e, true);
 		}
 		dbHelper.getWritableDatabase().setTransactionSuccessful();
 		long endTime = System.currentTimeMillis();
 		Log.w(TAG, "Done Bulk Updates (Time taken: " + (endTime - startTime) + " ms)");
+		return count;
 	}
 
 	private <E> String[] generateWhereVal(E entity) {
@@ -420,6 +422,7 @@ public class BaseService implements StormService {
 			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, null);
+			
 			if (cursor.moveToNext()) {
 				returnVal = (E) mapper.map(cursor, tableInformation);
 			}
@@ -441,7 +444,7 @@ public class BaseService implements StormService {
 		Cursor cursor = null;
 		try {
 			TableInformation tableInfo = EntityMetaDataCache.getMetaData(type);
-			Projection projection = new StormProjection(tableInfo);
+			Projection projection = projectionFor(type);
 			projection.count(tableInfo.getPrimaryKeyData().getAlias());
 			QueryGenerator queryGenerator = new QueryGenerator();
 			String sql = queryGenerator.rawQuery(tableInfo, restriction, projection);
