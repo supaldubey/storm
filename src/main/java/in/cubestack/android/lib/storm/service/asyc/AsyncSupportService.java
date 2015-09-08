@@ -41,7 +41,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 
@@ -58,7 +58,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 	
@@ -76,7 +76,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 
@@ -94,7 +94,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 	
@@ -111,7 +111,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 
@@ -128,7 +128,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 	
@@ -146,7 +146,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 
 	
@@ -163,7 +163,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 
 	
@@ -180,7 +180,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 	public <T> void find(final Class<T> type, final Restriction restriction, final StormCallBack<T> callBack) {
@@ -196,7 +196,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 
 	
@@ -213,7 +213,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 
 	
@@ -230,7 +230,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 	
@@ -247,7 +247,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 
 	
@@ -273,7 +273,7 @@ public class AsyncSupportService  {
 				}
 				return null;
 			}
-		};
+		}.execute();
 	}
 	
 }
