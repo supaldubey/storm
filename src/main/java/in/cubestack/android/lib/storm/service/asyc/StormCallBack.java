@@ -9,21 +9,21 @@ import java.util.List;
  * @author supal
  *
  */
-public class StormCallBack {
+public class StormCallBack<T> {
 	
-	public <T> void onResults(List<T> results) {
+	public void onResults(List<T> results) {
 		
 	}
 	
-	public <T> void onSingleRow(T entity) {
+	public void onSingleRow(T entity) {
 		
 	}
 	
-	public <T> void onSave(T entity) {
+	public void onSave(T entity) {
 		
 	}
 	
-	public <T> void onSaveAll(List<T> entity) {
+	public void onSaveAll(List<T> entity) {
 		
 	}
 	

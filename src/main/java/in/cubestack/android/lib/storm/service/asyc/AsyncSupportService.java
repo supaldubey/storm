@@ -28,7 +28,7 @@ public class AsyncSupportService  {
 	}
 
 	
-	public <T> void save(final T entity, final StormCallBack callBack) {
+	public <T> void save(final T entity, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -45,7 +45,7 @@ public class AsyncSupportService  {
 	}
 	
 
-	public <T> void saveAll(final List<T> entity, final StormCallBack callBack) {
+	public <T> void saveAll(final List<T> entity, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -62,7 +62,7 @@ public class AsyncSupportService  {
 	}
 	
 	
-	public <T> void update(final T entity, final StormCallBack callBack) {
+	public <T> void update(final T entity, final StormCallBack<T> callBack) {
 		
 		new AsyncTask<Void, Void, Void>() {
 
@@ -80,7 +80,7 @@ public class AsyncSupportService  {
 	}
 	
 
-	public <T> void update(final List<T> entity, final StormCallBack callBack) {
+	public <T> void update(final List<T> entity, final StormCallBack<T> callBack) {
 		
 		new AsyncTask<Void, Void, Void>() {
 
@@ -98,7 +98,7 @@ public class AsyncSupportService  {
 	}
 	
 	
-	public <T> void findById(final Class<T> type, final long id, final StormCallBack callBack) {
+	public <T> void findById(final Class<T> type, final long id, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -115,7 +115,7 @@ public class AsyncSupportService  {
 	}
 	
 
-	public <T> void truncate(final Class<T> type, final StormCallBack callBack) {
+	public <T> void truncate(final Class<T> type, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -133,7 +133,7 @@ public class AsyncSupportService  {
 	
 	
 	
-	public <E> void delete(final Class<E> type, final Restriction restriction, final StormCallBack callBack)  {
+	public <E> void delete(final Class<E> type, final Restriction restriction, final StormCallBack<E> callBack)  {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -150,7 +150,7 @@ public class AsyncSupportService  {
 	}
 
 	
-	public <E> void delete(final E entity, final StormCallBack callBack)  {
+	public <E> void delete(final E entity, final StormCallBack<E> callBack)  {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -167,7 +167,7 @@ public class AsyncSupportService  {
 	}
 
 	
-	public void project(final Class<?> type, final Restriction restriction, final Projection projection, final StormCallBack callBack) {
+	public  void project(final Class<Object> type, final Restriction restriction, final Projection projection, final StormCallBack<Object> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -183,7 +183,7 @@ public class AsyncSupportService  {
 		};
 	}
 	
-	public <T> void find(final Class<T> type, final Restriction restriction, final StormCallBack callBack) {
+	public <T> void find(final Class<T> type, final Restriction restriction, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -200,7 +200,7 @@ public class AsyncSupportService  {
 	}
 
 	
-	public <T> void findOne(final Class<T> type, final Restriction restriction, final StormCallBack callBack) {
+	public <T> void findOne(final Class<T> type, final Restriction restriction, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -217,7 +217,7 @@ public class AsyncSupportService  {
 	}
 
 	
-	public <T> void findAll(final Class<T> type, final StormCallBack callBack) {
+	public <T> void findAll(final Class<T> type, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -234,7 +234,7 @@ public class AsyncSupportService  {
 	}
 	
 	
-	public <E> void count(final Class<E> type, final StormCallBack callBack) {
+	public <E> void count(final Class<E> type, final StormCallBack<E> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -260,7 +260,7 @@ public class AsyncSupportService  {
 		return baseService.restrictionsFor(clazz);
 	}
 	
-	public <E> void count(final Class<E> type, final Restriction restriction, final StormCallBack callBack) {
+	public <E> void count(final Class<E> type, final Restriction restriction, final StormCallBack<E> callBack) {
 		new AsyncTask<Void, Void, Void>() {
 
 			@Override
