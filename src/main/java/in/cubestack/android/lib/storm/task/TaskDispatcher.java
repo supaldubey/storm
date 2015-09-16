@@ -51,7 +51,7 @@ public class TaskDispatcher extends AsyncTask<Object, Void, Void> {
 		for(Method method: methods) {
 			if(method.getName().equals(cycleEnvent.method())) {
 				try {
-					method.invoke(cycleEnvent, params);
+					method.invoke(lifeCycleHandler, params);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
