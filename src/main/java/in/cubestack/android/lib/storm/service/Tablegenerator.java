@@ -74,14 +74,14 @@ public class Tablegenerator {
         stringBuilder.append(COMMA);
     }
 
-    public List<String> alterSQLTableQuery(TableInformation tableInformation) {
+    public List<String> alterSQLTableQuery(TableInformation tableInformation, int newVersion) {
         List<String> statements = new ArrayList<String>(0);
 
         int columnsToadd = 0;
         String query = null;
 
         for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
-            if (tableInformation.getTableVersion() <= columnMetaData.getAddedVersion()) {
+            if (newVersion <= columnMetaData.getAddedVersion()) {
                 StringBuilder builder = new StringBuilder(" ALTER TABLE ");
                 builder.append(tableInformation.getTableName()).append(" ADD COLUMN ");
                 // This column needs to be added in this version. Go ahead for alter query.
