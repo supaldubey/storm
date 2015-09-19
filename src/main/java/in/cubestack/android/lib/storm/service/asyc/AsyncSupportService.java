@@ -296,14 +296,14 @@ public class AsyncSupportService {
 		}.execute();
 	}
 
-	public void rawQuery(final String query, final String[] arguments, final StormCallBack<Object> callBack) {
-		new AsyncTask<Void, Void, List<Object>>() {
+	public void rawQuery(final String query, final String[] arguments, final StormCallBack<Object[]> callBack) {
+		new AsyncTask<Void, Void, List<Object[]>>() {
 
 			private Throwable throwable;
 
 			@Override
-			protected List<Object> doInBackground(Void... arg0) {
-				List<Object> results = null;
+			protected List<Object[]> doInBackground(Void... arg0) {
+				List<Object[]> results = null;
 				try {
 					results = baseService.rawQuery(query, arguments);
 				} catch (Exception e) {
@@ -312,7 +312,7 @@ public class AsyncSupportService {
 				return results;
 			}
 
-			protected void onPostExecute(List<Object> result) {
+			protected void onPostExecute(List<Object[]> result) {
 				if (throwable != null) {
 					callBack.onError(throwable);
 				} else {

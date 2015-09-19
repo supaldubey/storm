@@ -15,6 +15,7 @@ import in.cubestack.android.lib.storm.criteria.StormProjection;
 import in.cubestack.android.lib.storm.criteria.StormRestrictions;
 import in.cubestack.android.lib.storm.lifecycle.LifeCycleEnvent;
 import in.cubestack.android.lib.storm.lifecycle.LifeCycleHandler;
+import in.cubestack.android.lib.storm.mapper.RawQueryMapper;
 import in.cubestack.android.lib.storm.mapper.RawRowMapper;
 import in.cubestack.android.lib.storm.mapper.ReflectionRowMapper;
 import in.cubestack.android.lib.storm.mapper.RowMapper;
@@ -62,15 +63,13 @@ public class BaseService implements StormService {
 
 	private static SQLiteOpenHelper dbHelper;
 	public static final String CONDITION = " = ? ";
-	
+
 	private StatementCache statementCache;
 
 	public BaseService(Context context, DatabaseMetaData databaseMetaData) {
 		dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
 		statementCache = new StatementCache();
 	}
-	
-	
 
 	@Override
 	public <E> Projection projectionFor(Class<E> entity) throws StormException {
@@ -96,20 +95,20 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
 			handler = (LifeCycleHandler<E>) tableInformation.getHandler();
-			if(!retain) {
+			if (!retain) {
 				dbHelper.getWritableDatabase().beginTransaction();
 			}
 			if (handler == null || handler.preSave(entity)) {
-				
+
 				SQLiteStatement statement = statementCache.fetch(entity.getClass());
-				if(statement == null) {
+				if (statement == null) {
 					statement = dbHelper.getWritableDatabase().compileStatement(tableInformation.getInsertSql());
 					statementCache.set(entity.getClass(), statement);
 				}
-				
+
 				statement.clearBindings();
 				int index = 1;
-				for(ColumnMetaData columnMetaData: tableInformation.getColumnMetaDataList()) {
+				for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
 					Object obj = Reflections.getFieldValue(entity, columnMetaData.getAlias());
 					if (obj != null) {
 						statement.bindString(index++, obj.toString());
@@ -117,7 +116,7 @@ public class BaseService implements StormService {
 						statement.bindString(index++, "");
 					}
 				}
-				
+
 				long id = statement.executeInsert();
 				Reflections.setField(entity, tableInformation.getPrimaryKeyData().getAlias(), id);
 				if (handler != null) {
@@ -126,11 +125,11 @@ public class BaseService implements StormService {
 
 			}
 			saveKids(entity, tableInformation);
-			if(!retain) {
+			if (!retain) {
 				dbHelper.getWritableDatabase().setTransactionSuccessful();
 				statementCache.clear();
 			}
-			
+
 		} catch (Exception throwable) {
 			if (handler != null) {
 				new TaskDispatcher(handler, LifeCycleEnvent.POST_SAVE).execute(entity, throwable);
@@ -156,18 +155,20 @@ public class BaseService implements StormService {
 				}
 				if (create) {
 					if (relationMetaData.isCollectionBacked()) {
-						if(Reflections.getFieldValue(entity, relationMetaData.getProperty()) == null) {
+						if (Reflections.getFieldValue(entity, relationMetaData.getProperty()) == null) {
 							// No Kids, The End;
 							return;
 						}
 						for (Object obj : (Collection<Object>) Reflections.getFieldValue(entity, relationMetaData.getProperty())) {
-							Reflections.setField(obj, relationMetaData.getJoinColumn(), Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
+							Reflections.setField(obj, relationMetaData.getJoinColumn(),
+									Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
 							save(obj, true);
 						}
 					} else {
 						Object kid = Reflections.getFieldValue(entity, relationMetaData.getAlias());
-						if(kid != null) {
-							Reflections.setField(kid, relationMetaData.getJoinColumn(), Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
+						if (kid != null) {
+							Reflections.setField(kid, relationMetaData.getJoinColumn(),
+									Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
 							save(kid, true);
 						}
 					}
@@ -284,9 +285,9 @@ public class BaseService implements StormService {
 		try {
 
 			dbHelper.getWritableDatabase().beginTransaction();
-			
+
 			dbHelper.getWritableDatabase().execSQL(new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(type), restriction));
-			
+
 			dbHelper.getWritableDatabase().setTransactionSuccessful();
 			dbHelper.getWritableDatabase().endTransaction();
 
@@ -303,7 +304,7 @@ public class BaseService implements StormService {
 		try {
 
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(entity.getClass());
-			
+
 			handler = (LifeCycleHandler<E>) tableInformation.getHandler();
 			if (handler == null || handler.preDelete(entity)) {
 				handleOrphans(entity, tableInformation);
@@ -330,8 +331,8 @@ public class BaseService implements StormService {
 		return delete(entity, false);
 	}
 
-	private <E> void handleOrphans(E entity, TableInformation tableInformation)
-			throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, Exception {
+	private <E> void handleOrphans(E entity, TableInformation tableInformation) throws SecurityException, NoSuchFieldException, IllegalArgumentException,
+			IllegalAccessException, Exception {
 		if (tableInformation.isRelational()) {
 			for (RelationMetaData relationMetaData : tableInformation.getRelations()) {
 				boolean isDeletion = false;
@@ -342,9 +343,9 @@ public class BaseService implements StormService {
 					}
 				}
 				if (isDeletion) {
-					delete(relationMetaData.getTargetEntity(), 
-							restrictionsFor(relationMetaData.getTargetEntity())
-								.equals(relationMetaData.getJoinColumn(), Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias())));
+					delete(relationMetaData.getTargetEntity(),
+							restrictionsFor(relationMetaData.getTargetEntity()).equals(relationMetaData.getJoinColumn(),
+									Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias())));
 				}
 			}
 		}
@@ -370,13 +371,11 @@ public class BaseService implements StormService {
 		return returnList;
 	}
 
-	
-	
 	@Override
-	public List<Object> rawQuery(String query, String[] arguments) throws Exception {
+	public List<Object[]> rawQuery(String query, String[] arguments) throws Exception {
 		Cursor cursor = null;
-		List<Object> returnList = new ArrayList<Object>();
-		RowMapper<List<String>> mapper = new RawRowMapper();
+		List<Object[]> returnList = new ArrayList<Object[]>();
+		RowMapper<Object[]> mapper = new RawQueryMapper();
 		try {
 
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, arguments);
@@ -388,8 +387,7 @@ public class BaseService implements StormService {
 		}
 		return returnList;
 	}
-	
-	
+
 	@Override
 	public <E> List<E> findAll(Class<E> type) throws Exception {
 		Cursor cursor = null;
@@ -442,7 +440,7 @@ public class BaseService implements StormService {
 			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, null);
-			
+
 			if (cursor.moveToNext()) {
 				returnVal = (E) mapper.map(cursor, tableInformation);
 			}
@@ -452,16 +450,11 @@ public class BaseService implements StormService {
 		return returnVal;
 	}
 
-	
 	@Override
 	public <E> int count(Class<E> type) throws Exception {
 		return count(type, restrictionsFor(type).notNull(EntityMetaDataCache.getMetaData(type).getPrimaryKeyData().getAlias()));
 	}
-	
-	
-	
-	
-	
+
 	@Override
 	public <E> int count(Class<E> type, Restriction restriction) throws Exception {
 		Cursor cursor = null;
@@ -517,8 +510,8 @@ public class BaseService implements StormService {
 			}
 			if (!retainConnection) {
 				statementCache.clear();
-				if(dbHelper.getWritableDatabase().inTransaction()) {
-					//Unlock Transaction in casse of errors
+				if (dbHelper.getWritableDatabase().inTransaction()) {
+					// Unlock Transaction in casse of errors
 					dbHelper.getWritableDatabase().endTransaction();
 				}
 				dbHelper.close();
