@@ -370,6 +370,26 @@ public class BaseService implements StormService {
 		return returnList;
 	}
 
+	
+	
+	@Override
+	public List<Object> rawQuery(String query, String[] arguments) throws Exception {
+		Cursor cursor = null;
+		List<Object> returnList = new ArrayList<Object>();
+		RowMapper<List<String>> mapper = new RawRowMapper();
+		try {
+
+			cursor = dbHelper.getReadableDatabase().rawQuery(query, arguments);
+			while (cursor.moveToNext()) {
+				returnList.add(mapper.map(cursor, null));
+			}
+		} finally {
+			closeSafe(cursor, false);
+		}
+		return returnList;
+	}
+	
+	
 	@Override
 	public <E> List<E> findAll(Class<E> type) throws Exception {
 		Cursor cursor = null;
@@ -437,6 +457,9 @@ public class BaseService implements StormService {
 	public <E> int count(Class<E> type) throws Exception {
 		return count(type, restrictionsFor(type).notNull(EntityMetaDataCache.getMetaData(type).getPrimaryKeyData().getAlias()));
 	}
+	
+	
+	
 	
 	
 	@Override

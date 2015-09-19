@@ -76,4 +76,6 @@ public interface StormService {
 
 	<E> int count(Class<E> type) throws Exception;
 
+	List<Object> rawQuery(String query, String[] arguments) throws Exception;
+
 }
