@@ -8,28 +8,27 @@ import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.SQLFunction;
 
-
 /**
  * A core Android SQLite ORM framrwork build for speed and raw execution.
- * Copyright (c) 2014  CubeStack. Version built for Flash Back..
+ * Copyright (c) 2014 CubeStack. Version built for Flash Back..
  * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  * <p/>
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
- * NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
- * USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 public class QueryGenerator {
 
@@ -48,51 +47,49 @@ public class QueryGenerator {
 	private static final char CLOSE_BRACES = ')';
 	private static final String VALUES = " VALUES ( ";
 	private static final char QUESTION_MARK = '?';
-	
-	
+
 	private Class<?> entityClass;
-	
-	
+
 	public String rawQuery(Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection); 
+		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection);
 	}
-	
+
 	public String deleteRawQuery(TableInformation tableInformation, Restriction restriction) {
-		return new StringBuilder("DELETE ")
-				.append(FROM)
-				.append(tableInformation.getTableName())
-				.append(SPACE)
-				.append(tableInformation.getAlias())
-				.append(WHERE)
-				.append(restriction.toSqlString())
-				.toString();
+		return new StringBuilder("DELETE ").append(FROM).append(tableInformation.getTableName()).append(SPACE).append(WHERE)
+				.append(cleanAlias(restriction.toSqlString(), tableInformation.getAlias())).toString();
 	}
-	
-	public String rawQuery(TableInformation information, Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+
+	private String cleanAlias(String sqlString, String alias) {
+
+		return sqlString.replaceAll(alias + ".", "");
+	}
+
+	public String rawQuery(TableInformation information, Restriction restriction, Projection projection) throws IllegalArgumentException,
+			IllegalAccessException, InstantiationException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(SELECT_INIT);
 		generateColumnNames(information, sql, projection);
-		if(information.getRelations() != null ) {
-	    	 for(RelationMetaData relationMetaData: information.getRelations()) {
-	    		 if(relationMetaData.getFetchType() == FetchType.EAGER) {
-		    		 TableInformation reInformation = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
-		    		 if((projection == null || projection.getColumns().contains(relationMetaData.getProperty()))) {
-		    			 generateColumnNames(reInformation, sql, null);
-		    		 }
-	    		 }
-	    	 }
-   	 	}
-		
-		//	 	Remove the comma
-		sql = new StringBuilder(sql.substring(0, sql.length() -1));
-	
-		sql.append(FROM).append(information.getTableName() ).append(SPACE).append(information.getAlias());
-		
-		for(RelationMetaData relationMetaData: information.getRelations()) {
-			if(relationMetaData.getFetchType() == FetchType.EAGER) {
-				if((projection == null || projection.getColumns().contains(relationMetaData.getProperty()))) {
+		if (information.getRelations() != null) {
+			for (RelationMetaData relationMetaData : information.getRelations()) {
+				if (relationMetaData.getFetchType() == FetchType.EAGER) {
 					TableInformation reInformation = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
-					sql.append(LEFT_JOIN ).append(reInformation.getTableName()).append(SPACE).append(relationMetaData.getAlias());
+					if ((projection == null || projection.getColumns().contains(relationMetaData.getProperty()))) {
+						generateColumnNames(reInformation, sql, null);
+					}
+				}
+			}
+		}
+
+		// Remove the comma
+		sql = new StringBuilder(sql.substring(0, sql.length() - 1));
+
+		sql.append(FROM).append(information.getTableName()).append(SPACE).append(information.getAlias());
+
+		for (RelationMetaData relationMetaData : information.getRelations()) {
+			if (relationMetaData.getFetchType() == FetchType.EAGER) {
+				if ((projection == null || projection.getColumns().contains(relationMetaData.getProperty()))) {
+					TableInformation reInformation = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
+					sql.append(LEFT_JOIN).append(reInformation.getTableName()).append(SPACE).append(relationMetaData.getAlias());
 					sql.append(ON);
 					sql.append(relationMetaData.getAlias()).append(DOT).append(validateClause(relationMetaData.getJoinColumn(), reInformation));
 					sql.append(EQUALS);
@@ -100,76 +97,70 @@ public class QueryGenerator {
 				}
 			}
 		}
-		
-		
-		
+
 		// Append Restrictions
 		sql.append(WHERE);
 		sql.append(restriction.sqlString());
-		
-		//Append Group by clause in case available :)
-		if(projection != null  && !projection.getColumns().isEmpty()) {
+
+		// Append Group by clause in case available :)
+		if (projection != null && !projection.getColumns().isEmpty()) {
 			sql.append(GROUP_BY);
-			for(String column: projection.getColumns()) {
+			for (String column : projection.getColumns()) {
 				sql.append(column).append(COMMA);
 			}
 			// Trim last comma
-			sql = new StringBuilder(sql.substring(0, sql.length() -1));
+			sql = new StringBuilder(sql.substring(0, sql.length() - 1));
 		}
 		return sql.toString();
 	}
-	
-	
-    private String validateClause(String alias, TableInformation tableInformation) {
-        String column = tableInformation.getColumnName(alias);
 
-        if (column == null) {
-            // You have come till here, that is nothing has matched. GO AWAY AND FIX THE FUCKING CODE..
-            throw new RuntimeException("No mapping found for " + alias + " in entity table " + tableInformation.getTableName());
-        }
-        return column;
-    }
-	
-    private void generateColumnNames(TableInformation tableInformation, StringBuilder builder, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-    	if(projection ==null || projection.getColumns().contains(tableInformation.getAlias() + "." +tableInformation.getPrimaryKeyData().getAlias())) {
-    		builder.append(tableInformation.getAlias()).append(DOT).append(tableInformation.getPrimaryKeyData().getColumnName()).append(COMMA);
-    	}
-		 for(ColumnMetaData columnMetaData: tableInformation.getColumnMetaDataList()) {
-			 if(projection ==null || projection.getColumns().contains(tableInformation.getAlias() + "." +columnMetaData.getAlias())) {
-				 builder.append(tableInformation.getAlias()).append(DOT).append(columnMetaData.getColumnName()).append(COMMA);
-			 }
-		 }
-		 
-		 if(projection != null) {
-			 for(SQLFunction sqlFunction: projection.getAggregateFunctions()) {
-				 builder.append(sqlFunction.toSqlString()).append(COMMA);
-			 }
-		 }
-    }
+	private String validateClause(String alias, TableInformation tableInformation) {
+		String column = tableInformation.getColumnName(alias);
+
+		if (column == null) {
+			// You have come till here, that is nothing has matched. GO AWAY AND
+			// FIX THE FUCKING CODE..
+			throw new RuntimeException("No mapping found for " + alias + " in entity table " + tableInformation.getTableName());
+		}
+		return column;
+	}
+
+	private void generateColumnNames(TableInformation tableInformation, StringBuilder builder, Projection projection) throws IllegalArgumentException,
+			IllegalAccessException, InstantiationException {
+		if (projection == null || projection.getColumns().contains(tableInformation.getAlias() + "." + tableInformation.getPrimaryKeyData().getAlias())) {
+			builder.append(tableInformation.getAlias()).append(DOT).append(tableInformation.getPrimaryKeyData().getColumnName()).append(COMMA);
+		}
+		for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
+			if (projection == null || projection.getColumns().contains(tableInformation.getAlias() + "." + columnMetaData.getAlias())) {
+				builder.append(tableInformation.getAlias()).append(DOT).append(columnMetaData.getColumnName()).append(COMMA);
+			}
+		}
+
+		if (projection != null) {
+			for (SQLFunction sqlFunction : projection.getAggregateFunctions()) {
+				builder.append(sqlFunction.toSqlString()).append(COMMA);
+			}
+		}
+	}
 
 	public String insertQuery(TableInformation tableInformation) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-		StringBuilder insert = new StringBuilder(INSERT_INTO)
-				.append(tableInformation.getTableName())
-				.append(OPEN_BRACES);
-		
-		for(ColumnMetaData columnMetaData: tableInformation.getColumnMetaDataList()) {
-			 insert.append(columnMetaData.getColumnName()).append(COMMA);
-		 }
-		
-		insert = new StringBuilder(insert.substring(0, insert.length() -1));
-		
+		StringBuilder insert = new StringBuilder(INSERT_INTO).append(tableInformation.getTableName()).append(OPEN_BRACES);
+
+		for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
+			insert.append(columnMetaData.getColumnName()).append(COMMA);
+		}
+
+		insert = new StringBuilder(insert.substring(0, insert.length() - 1));
+
 		insert.append(CLOSE_BRACES).append(VALUES);
-		
-		for(int columns =0; columns < tableInformation.getColumnMetaDataList().size(); columns ++) {
+
+		for (int columns = 0; columns < tableInformation.getColumnMetaDataList().size(); columns++) {
 			insert.append(QUESTION_MARK).append(COMMA);
 		}
-		insert = new StringBuilder(insert.substring(0, insert.length() -1));
-		
-		//Primary Key 
-		return insert
-				.append(CLOSE_BRACES)
-				.toString();
-	}
-    	
-}
+		insert = new StringBuilder(insert.substring(0, insert.length() - 1));
 
+		// Primary Key
+		return insert.append(CLOSE_BRACES).toString();
+	}
+
+}

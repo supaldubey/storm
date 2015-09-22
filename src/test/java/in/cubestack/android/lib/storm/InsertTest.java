@@ -15,12 +15,13 @@ public class InsertTest {
 
 	/**
 	 * @param args
-	 * @throws InstantiationException 
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
 		System.out.println(new QueryGenerator().insertQuery(EntityMetaDataCache.getMetaData(TestEntity.class)));
+
 	}
 
 }

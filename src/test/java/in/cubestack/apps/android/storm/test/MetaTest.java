@@ -21,9 +21,9 @@ public class MetaTest {
 
 	/**
 	 * @param args
-	 * @throws Throwable 
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
+	 * @throws Throwable
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	@Test
 	public void main() throws IllegalArgumentException, IllegalAccessException, Throwable {
@@ -31,13 +31,16 @@ public class MetaTest {
 		Restriction restriction = restrictions.equals("name", "supal");
 		restriction = restrictions.and(restriction, restrictions.notNull("price"));
 		Projection projection = new StormProjection(EntityMetaDataCache.getMetaData(TestEntity.class));
-		
+
 		projection.add("id");
 		projection.add("name");
-		
+
 		projection.sum("price");
-		
+
 		String dsql = new QueryGenerator().rawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction.page(3), null);
+		System.out.println(dsql);
+
+		dsql = new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction);
 		System.out.println(dsql);
 	}
 
