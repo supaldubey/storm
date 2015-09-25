@@ -274,7 +274,20 @@ public class BaseService implements StormService {
 	public <E> int truncateTable(Class<E> type) throws Exception {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
-			return dbHelper.getWritableDatabase().delete(tableInformation.getTableName(), null, null);
+
+			dbHelper.getWritableDatabase().beginTransaction();
+
+			if (tableInformation.isRelational()) {
+				// Delete all relations first
+				for (RelationMetaData relationMetaData : tableInformation.getRelations()) {
+					dbHelper.getWritableDatabase().delete(EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity()).getTableName(), null, null);
+				}
+			}
+
+			int deleted = dbHelper.getWritableDatabase().delete(tableInformation.getTableName(), null, null);
+			dbHelper.getWritableDatabase().setTransactionSuccessful();
+			dbHelper.getWritableDatabase().endTransaction();
+			return deleted;
 		} finally {
 			closeSafe(null, false);
 		}
@@ -287,7 +300,8 @@ public class BaseService implements StormService {
 
 			dbHelper.getWritableDatabase().beginTransaction();
 
-			dbHelper.getWritableDatabase().execSQL(new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(type), restriction));
+			dbHelper.getWritableDatabase().execSQL(new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(type), restriction),
+					restriction.values());
 
 			dbHelper.getWritableDatabase().setTransactionSuccessful();
 			dbHelper.getWritableDatabase().endTransaction();
