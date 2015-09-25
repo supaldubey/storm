@@ -10,87 +10,87 @@ import java.util.List;
 
 /**
  * A core Android SQLite ORM framrwork build for speed and raw execution.
- * Copyright (c) 2014  CubeStack. Version built for Flash Back..
+ * Copyright (c) 2014 CubeStack. Version built for Flash Back..
  * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  * <p/>
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
- * NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
- * USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 public class TableInformation {
 
 	private int tableVersion;
-    private String tableName;
-    private ColumnMetaData primaryKeyData;
-    private List<ColumnMetaData> columnMetaDataList = new LinkedList<ColumnMetaData>();
-    private List<RelationMetaData> relations = new LinkedList<RelationMetaData>();
-    private String alias;
-    private LifeCycleHandler<?> handler;
-    private String insertSql;
-    
-    
+	private String tableName;
+	private ColumnMetaData primaryKeyData;
+	private List<ColumnMetaData> columnMetaDataList = new LinkedList<ColumnMetaData>();
+	private List<RelationMetaData> relations = new LinkedList<RelationMetaData>();
+	private String alias;
+	private LifeCycleHandler<?> handler;
+	private String insertSql;
+
 	public String getTableName() {
-        return tableName;
-    }
+		return tableName;
+	}
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
 
-    /**
-     * @param columnMetaDataList the columnMetaDataList to set
-     */
-    public void setColumnMetaDataList(List<ColumnMetaData> columnMetaDataList) {
-        this.columnMetaDataList = columnMetaDataList;
-    }
+	/**
+	 * @param columnMetaDataList
+	 *            the columnMetaDataList to set
+	 */
+	public void setColumnMetaDataList(List<ColumnMetaData> columnMetaDataList) {
+		this.columnMetaDataList = columnMetaDataList;
+	}
 
-    /**
-     * @return the columnMetaDataList
-     */
-    public List<ColumnMetaData> getColumnMetaDataList() {
-        return columnMetaDataList;
-    }
+	/**
+	 * @return the columnMetaDataList
+	 */
+	public List<ColumnMetaData> getColumnMetaDataList() {
+		return columnMetaDataList;
+	}
 
-    /**
-     * @param primaryKeyData the primaryKeyData to set
-     */
-    public void setPrimaryKeyData(ColumnMetaData primaryKeyData) {
-        this.primaryKeyData = primaryKeyData;
-    }
+	/**
+	 * @param primaryKeyData
+	 *            the primaryKeyData to set
+	 */
+	public void setPrimaryKeyData(ColumnMetaData primaryKeyData) {
+		this.primaryKeyData = primaryKeyData;
+	}
 
-    /**
-     * @return the primaryKeyData
-     */
-    public ColumnMetaData getPrimaryKeyData() {
-        return primaryKeyData;
-    }
+	/**
+	 * @return the primaryKeyData
+	 */
+	public ColumnMetaData getPrimaryKeyData() {
+		return primaryKeyData;
+	}
 
+	public int getTableVersion() {
+		return tableVersion;
+	}
 
-    public int getTableVersion() {
-        return tableVersion;
-    }
+	public void setTableVersion(int tableVersion) {
+		this.tableVersion = tableVersion;
+	}
 
-    public void setTableVersion(int tableVersion) {
-        this.tableVersion = tableVersion;
-    }
-
-    @Override
-    public String toString() {
-        return "[TableInfo {name=" + tableName + "}, {primaryKey=" + primaryKeyData.getAlias() + "/" + primaryKeyData.getColumnName() + "}]";
-    }
+	@Override
+	public String toString() {
+		return "[TableInfo {name=" + tableName + "}, {primaryKey=" + primaryKeyData.getAlias() + "/" + primaryKeyData.getColumnName() + "}]";
+	}
 
 	public List<RelationMetaData> getRelations() {
 		return relations;
@@ -117,43 +117,41 @@ public class TableInformation {
 	}
 
 	public boolean isRelational() {
-		return relations != null && ! relations.isEmpty();
+		return relations != null && !relations.isEmpty();
 	}
 
-	
 	public ColumnMetaData getColumnMetaData(String alias) {
-		
+
 		if (getPrimaryKeyData().getAlias().equals(alias)) {
-            return getPrimaryKeyData();
-        }
-        for (ColumnMetaData columnMetaData : getColumnMetaDataList()) {
-            if (columnMetaData.getAlias().equals(alias)) {
-                return columnMetaData;
-            }
-        }
-        return null;
+			return getPrimaryKeyData();
+		}
+		for (ColumnMetaData columnMetaData : getColumnMetaDataList()) {
+			if (columnMetaData.getAlias().equals(alias)) {
+				return columnMetaData;
+			}
+		}
+		return null;
 	}
-	
+
 	public String getColumnName(String alias) {
 		ColumnMetaData columnMetaData = getColumnMetaData(alias);
-        if (columnMetaData != null) {
-        	return columnMetaData.getColumnName();
-        }
-        return null;
-    }
-	
-	
+		if (columnMetaData != null) {
+			return columnMetaData.getColumnName();
+		}
+		return null;
+	}
+
 	public String getProperty(String columnNme) {
 		if (getPrimaryKeyData().getColumnName().equals(columnNme)) {
-            return getPrimaryKeyData().getAlias();
-        }
-        for (ColumnMetaData columnMetaData : getColumnMetaDataList()) {
-            if (columnMetaData.getColumnName().equals(columnNme)) {
-                return columnMetaData.getAlias();
-            }
-        }
-        return null;
-    }
+			return getPrimaryKeyData().getAlias();
+		}
+		for (ColumnMetaData columnMetaData : getColumnMetaDataList()) {
+			if (columnMetaData.getColumnName().equals(columnNme)) {
+				return columnMetaData.getAlias();
+			}
+		}
+		return null;
+	}
 
 	public String getInsertSql() {
 		return insertSql;
@@ -162,5 +160,5 @@ public class TableInformation {
 	public void setInsertSql(String insertSql) {
 		this.insertSql = insertSql;
 	}
-	
+
 }
