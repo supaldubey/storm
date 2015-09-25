@@ -36,7 +36,7 @@ public class StormRestrictions implements Restrictions {
 		this.tableInformation = tableInformation;
 	}
 
-	public <T> Restrictions restrictionsFor(Class<T> entity) {
+	public static <T> Restrictions restrictionsFor(Class<T> entity) {
 		try {
 			return new StormRestrictions(EntityMetaDataCache.getMetaData(entity));
 		} catch (Exception ex) {
