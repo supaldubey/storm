@@ -4,6 +4,7 @@
 package in.cubestack.android.lib.storm.core;
 
 import in.cubestack.android.lib.storm.FetchType;
+import in.cubestack.android.lib.storm.SortOrder;
 import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.SQLFunction;
@@ -32,6 +33,7 @@ import in.cubestack.android.lib.storm.criteria.SQLFunction;
  */
 public class QueryGenerator {
 
+	private static final String ORDER_BY = " ORDER BY ";
 	private static final String INSERT_INTO = "INSERT INTO ";
 	private static final String GROUP_BY = " GROUP BY ";
 	private static final String WHERE = " WHERE ";
@@ -163,4 +165,18 @@ public class QueryGenerator {
 		return insert.append(CLOSE_BRACES).toString();
 	}
 
+	public String orderBy(String[] props, TableInformation information, SortOrder order) {
+		StringBuilder builder = new StringBuilder(ORDER_BY);
+		for (String prop : props) {
+			builder.append(SPACE);
+			builder.append(information.getAlias()).append(DOT);
+			builder.append(information.getColumnName(prop));
+			builder.append(COMMA);
+		}
+		builder = new StringBuilder(builder.substring(0, builder.length() - 1));
+		builder.append(SPACE);
+		builder.append(order);
+		builder.append(SPACE);
+		return builder.toString();
+	}
 }

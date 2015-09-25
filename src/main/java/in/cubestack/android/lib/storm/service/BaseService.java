@@ -8,6 +8,7 @@ import in.cubestack.android.lib.storm.core.QueryGenerator;
 import in.cubestack.android.lib.storm.core.RelationMetaData;
 import in.cubestack.android.lib.storm.core.StormException;
 import in.cubestack.android.lib.storm.core.TableInformation;
+import in.cubestack.android.lib.storm.criteria.Order;
 import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.Restrictions;
@@ -410,6 +411,27 @@ public class BaseService implements StormService {
 	}
 
 	@Override
+	public <E> List<E> findAll(Class<E> type, Order order) throws Exception {
+		Cursor cursor = null;
+		List<E> returnList = new ArrayList<E>();
+		RowMapper<E> mapper = new ReflectionRowMapper<E>(type);
+		try {
+			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
+			Restriction restriction = restrictionsFor(type).notNull(tableInformation.getPrimaryKeyData().getAlias());
+
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null) + order.orderSql();
+			Log.i("SQUER_QUERY: ", query);
+			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
+			while (cursor.moveToNext()) {
+				returnList.add((E) mapper.map(cursor, tableInformation));
+			}
+		} finally {
+			closeSafe(cursor, false);
+		}
+		return returnList;
+	}
+
+	@Override
 	public <E> List<E> find(Class<E> type, Restriction restriction) throws Exception {
 		Cursor cursor = null;
 		List<E> returnList = new ArrayList<E>();
@@ -419,6 +441,25 @@ public class BaseService implements StormService {
 
 			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
 			Log.i("SQUER_QUERY: ", query);
+			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
+			while (cursor.moveToNext()) {
+				returnList.add((E) mapper.map(cursor, tableInformation));
+			}
+		} finally {
+			closeSafe(cursor, false);
+		}
+		return returnList;
+	}
+
+	@Override
+	public <E> List<E> find(Class<E> type, Restriction restriction, Order order) throws Exception {
+		Cursor cursor = null;
+		List<E> returnList = new ArrayList<E>();
+		RowMapper<E> mapper = new ReflectionRowMapper<E>(type);
+		try {
+			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
+
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null) + order.orderSql();
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
 			while (cursor.moveToNext()) {
 				returnList.add((E) mapper.map(cursor, tableInformation));

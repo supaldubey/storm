@@ -3,8 +3,10 @@
  */
 package in.cubestack.apps.android.storm.test;
 
+import in.cubestack.android.lib.storm.SortOrder;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.android.lib.storm.core.QueryGenerator;
+import in.cubestack.android.lib.storm.criteria.Order;
 import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.Restrictions;
@@ -40,8 +42,10 @@ public class MetaTest {
 		String dsql = new QueryGenerator().rawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction.page(3), null);
 		System.out.println(dsql);
 
+		String order = Order.orderFor(TestEntity.class, new String[] { "id", "name" }, SortOrder.DESC).orderSql();
+		System.out.println(order);
+
 		dsql = new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction);
 		System.out.println(dsql);
 	}
-
 }

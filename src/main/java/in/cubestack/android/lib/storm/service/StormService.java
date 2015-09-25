@@ -1,6 +1,7 @@
 package in.cubestack.android.lib.storm.service;
 
 import in.cubestack.android.lib.storm.core.StormException;
+import in.cubestack.android.lib.storm.criteria.Order;
 import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.Restrictions;
@@ -74,5 +75,9 @@ public interface StormService {
 	<E> int count(Class<E> type) throws Exception;
 
 	List<Object[]> rawQuery(String query, String[] arguments) throws Exception;
+
+	<E> List<E> find(Class<E> type, Restriction restriction, Order order) throws Exception;
+
+	<E> List<E> findAll(Class<E> type, Order order) throws Exception;
 
 }

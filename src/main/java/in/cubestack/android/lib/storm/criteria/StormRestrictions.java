@@ -3,38 +3,47 @@
  */
 package in.cubestack.android.lib.storm.criteria;
 
+import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.android.lib.storm.core.TableInformation;
 
 /**
  * A core Android SQLite ORM framrwork build for speed and raw execution.
- * Copyright (c) 2014  CubeStack. Version built for Flash Back..
+ * Copyright (c) 2014 CubeStack. Version built for Flash Back..
  * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  * <p/>
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
- * NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
- * USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 public class StormRestrictions implements Restrictions {
 
 	private TableInformation tableInformation;
-	
+
 	public StormRestrictions(TableInformation tableInformation) {
 		this.tableInformation = tableInformation;
 	}
-	
+
+	public <T> Restrictions restrictionsFor(Class<T> entity) {
+		try {
+			return new StormRestrictions(EntityMetaDataCache.getMetaData(entity));
+		} catch (Exception ex) {
+			throw new RuntimeException("Invalid entity, please check your mapppings for " + entity, ex);
+		}
+	}
+
 	@Override
 	public Restriction equals(String property, Object value) {
 		return new BasicRestriction(property, value, SQLOperator.EQUALS, tableInformation);
@@ -64,12 +73,12 @@ public class StormRestrictions implements Restrictions {
 	public Restriction likeIgnoreCase(String property, String value) {
 		return new LikeRestriction(property, value, true, tableInformation);
 	}
-	
+
 	@Override
 	public Restriction isNull(String property) {
 		return new NullBasedRestriction(property, true, tableInformation);
 	}
-	
+
 	@Override
 	public Restriction notNull(String property) {
 		return new NullBasedRestriction(property, false, tableInformation);

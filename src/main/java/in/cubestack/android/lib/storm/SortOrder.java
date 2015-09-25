@@ -6,7 +6,7 @@ package in.cubestack.android.lib.storm;
 /**
  * @author Supal
  */
-public enum OrderBy {
+public enum SortOrder {
     ASC,
     DESC
 }

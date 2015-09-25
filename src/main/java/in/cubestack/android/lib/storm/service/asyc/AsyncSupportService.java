@@ -5,6 +5,7 @@ package in.cubestack.android.lib.storm.service.asyc;
 
 import in.cubestack.android.lib.storm.core.DatabaseMetaData;
 import in.cubestack.android.lib.storm.core.StormException;
+import in.cubestack.android.lib.storm.criteria.Order;
 import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.Restrictions;
@@ -350,6 +351,33 @@ public class AsyncSupportService {
 		}.execute();
 	}
 
+	public <T> void find(final Class<T> type, final Restriction restriction, final Order order, final StormCallBack<T> callBack) {
+		new AsyncTask<Void, Void, List<T>>() {
+
+			private Throwable throwable;
+
+			@Override
+			protected List<T> doInBackground(Void... arg0) {
+				List<T> results = null;
+				try {
+					results = baseService.find(type, restriction, order);
+				} catch (Exception e) {
+					throwable = e;
+				}
+				return results;
+			}
+
+			protected void onPostExecute(List<T> result) {
+				if (throwable != null) {
+					callBack.onError(throwable);
+				} else {
+					callBack.onResults(result);
+				}
+			};
+
+		}.execute();
+	}
+
 	public <T> void findOne(final Class<T> type, final Restriction restriction, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, T>() {
 
@@ -387,6 +415,33 @@ public class AsyncSupportService {
 				List<T> results = null;
 				try {
 					results = baseService.findAll(type);
+
+				} catch (Exception e) {
+					throwable = e;
+				}
+				return results;
+			}
+
+			protected void onPostExecute(List<T> results) {
+				if (throwable != null) {
+					callBack.onError(throwable);
+				} else {
+					callBack.onResults(results);
+				}
+			};
+		}.execute();
+	}
+
+	public <T> void findAll(final Class<T> type, final Order order, final StormCallBack<T> callBack) {
+		new AsyncTask<Void, Void, List<T>>() {
+
+			private Throwable throwable;
+
+			@Override
+			protected List<T> doInBackground(Void... arg0) {
+				List<T> results = null;
+				try {
+					results = baseService.findAll(type, order);
 
 				} catch (Exception e) {
 					throwable = e;
