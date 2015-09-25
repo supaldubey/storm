@@ -5,6 +5,7 @@ package in.cubestack.android.lib.storm.core;
 
 import in.cubestack.android.lib.storm.FetchType;
 import in.cubestack.android.lib.storm.SortOrder;
+import in.cubestack.android.lib.storm.criteria.Order;
 import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.SQLFunction;
@@ -53,7 +54,7 @@ public class QueryGenerator {
 	private Class<?> entityClass;
 
 	public String rawQuery(Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection);
+		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection, null);
 	}
 
 	public String deleteRawQuery(TableInformation tableInformation, Restriction restriction) {
@@ -66,7 +67,7 @@ public class QueryGenerator {
 		return sqlString.replaceAll(alias + ".", "");
 	}
 
-	public String rawQuery(TableInformation information, Restriction restriction, Projection projection) throws IllegalArgumentException,
+	public String rawQuery(TableInformation information, Restriction restriction, Projection projection, Order order) throws IllegalArgumentException,
 			IllegalAccessException, InstantiationException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(SELECT_INIT);
@@ -102,7 +103,7 @@ public class QueryGenerator {
 
 		// Append Restrictions
 		sql.append(WHERE);
-		sql.append(restriction.sqlString());
+		sql.append(restriction.sqlString(order));
 
 		// Append Group by clause in case available :)
 		if (projection != null && !projection.getColumns().isEmpty()) {

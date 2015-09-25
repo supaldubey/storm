@@ -34,17 +34,17 @@ public abstract class PageableRestriction implements Restriction {
 	}
 
 	public abstract String toSqlString();
-	
+
 	@Override
-	public String sqlString() {
-		String sql = toSqlString(); 
+	public String sqlString(Order order) {
+		String sql = toSqlString();
+
+		if (order != null) {
+			sql += order.orderSql();
+		}
+
 		if (limit > 0 && offset >= 0) {
-			sql = new StringBuilder(sql)
-					.append(LMT)
-					.append(limit)
-					.append(OFF_ST)
-					.append(offset)
-					.toString();
+			sql = new StringBuilder(sql).append(LMT).append(limit).append(OFF_ST).append(offset).toString();
 		}
 
 		return sql;

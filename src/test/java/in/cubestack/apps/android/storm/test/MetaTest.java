@@ -39,10 +39,11 @@ public class MetaTest {
 
 		projection.sum("price");
 
-		String dsql = new QueryGenerator().rawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction.page(3), null);
+		Order order = Order.orderFor(TestEntity.class, new String[] { "id", "name" }, SortOrder.DESC);
+
+		String dsql = new QueryGenerator().rawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction.page(3), null, order);
 		System.out.println(dsql);
 
-		String order = Order.orderFor(TestEntity.class, new String[] { "id", "name" }, SortOrder.DESC).orderSql();
 		System.out.println(order);
 
 		dsql = new QueryGenerator().deleteRawQuery(EntityMetaDataCache.getMetaData(TestEntity.class), restriction);

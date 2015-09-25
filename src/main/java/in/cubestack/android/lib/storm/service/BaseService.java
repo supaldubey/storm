@@ -360,7 +360,7 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
 
-			String query = new QueryGenerator().rawQuery(tableInformation, restriction, projection);
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, projection, null);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
 			while (cursor.moveToNext()) {
@@ -398,7 +398,7 @@ public class BaseService implements StormService {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
 			Restriction restriction = restrictionsFor(type).notNull(tableInformation.getPrimaryKeyData().getAlias());
 
-			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null, null);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
 			while (cursor.moveToNext()) {
@@ -419,7 +419,7 @@ public class BaseService implements StormService {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
 			Restriction restriction = restrictionsFor(type).notNull(tableInformation.getPrimaryKeyData().getAlias());
 
-			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null) + order.orderSql();
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null, order);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
 			while (cursor.moveToNext()) {
@@ -439,7 +439,7 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
 
-			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null, null);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
 			while (cursor.moveToNext()) {
@@ -459,7 +459,7 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
 
-			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null) + order.orderSql();
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null, order);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, restriction.values());
 			while (cursor.moveToNext()) {
 				returnList.add((E) mapper.map(cursor, tableInformation));
@@ -478,7 +478,7 @@ public class BaseService implements StormService {
 		try {
 			TableInformation tableInformation = EntityMetaDataCache.getMetaData(type);
 
-			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null);
+			String query = new QueryGenerator().rawQuery(tableInformation, restriction, null, null);
 			Log.i("SQUER_QUERY: ", query);
 			cursor = dbHelper.getReadableDatabase().rawQuery(query, null);
 
@@ -504,7 +504,7 @@ public class BaseService implements StormService {
 			Projection projection = projectionFor(type);
 			projection.count(tableInfo.getPrimaryKeyData().getAlias());
 			QueryGenerator queryGenerator = new QueryGenerator();
-			String sql = queryGenerator.rawQuery(tableInfo, restriction, projection);
+			String sql = queryGenerator.rawQuery(tableInfo, restriction, projection, null);
 			cursor = dbHelper.getReadableDatabase().rawQuery(sql, restriction.values());
 
 			RowMapper<List<String>> mapper = new RawRowMapper();
