@@ -19,7 +19,7 @@ import android.os.AsyncTask;
 /**
  * @author Supal Dubey
  * 
- *         A core Android SQLite ORM framrwork build for speed and raw
+ *         A core Android SQLite ORM framework build for speed and raw
  *         execution. Copyright (c) 2014 CubeStack. Version built for Flash
  *         Back..
  *         <p/>

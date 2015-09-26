@@ -9,7 +9,7 @@ import in.cubestack.android.lib.storm.criteria.Restrictions;
 import java.util.List;
 
 /**
- * A core Android SQLite ORM framrwork build for speed and raw execution.
+ * A core Android SQLite ORM framework build for speed and raw execution.
  * Copyright (c) 2014 CubeStack. Version built for Flash Back..
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy

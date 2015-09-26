@@ -5,7 +5,7 @@ package in.cubestack.android.lib.storm;
 
 
 /**
- * A core Android SQLite ORM framrwork build for speed and raw execution. Copyright (c) 2011 Supal Dubey,
+ * A core Android SQLite ORM framework build for speed and raw execution. Copyright (c) 2011 Supal Dubey,
  * supal.dubey@gmail.com
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy

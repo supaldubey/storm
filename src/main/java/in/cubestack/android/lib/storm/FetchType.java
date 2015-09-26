@@ -3,8 +3,8 @@ package in.cubestack.android.lib.storm;
 
 
 /**
- * A core Android SQLite ORM framrwork build for speed and raw execution.
- * Copyright (c) 2014  CubeStack. Version built for Flash Back..
+ * A core Android SQLite ORM framework build for speed and raw execution.
+ * Copyright (c) 2014-15  CubeStack. Built for performance, scalability and ease to use.
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
