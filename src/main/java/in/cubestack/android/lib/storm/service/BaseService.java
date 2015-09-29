@@ -23,7 +23,6 @@ import in.cubestack.android.lib.storm.mapper.ReflectionRowMapper;
 import in.cubestack.android.lib.storm.mapper.RowMapper;
 import in.cubestack.android.lib.storm.task.TaskDispatcher;
 import in.cubestack.android.lib.storm.util.Reflections;
-import in.cubestack.android.lib.storm.util.StormUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -532,7 +531,7 @@ public class BaseService implements StormService {
 				List<String> res = mapper.map(cursor, tableInfo);
 				if (res != null && res.size() > 0) {
 					String length = res.get(0);
-					return StormUtil.safeParse(length);
+					return safeParse(length);
 				}
 			}
 		} finally {
@@ -580,6 +579,17 @@ public class BaseService implements StormService {
 		} catch (Exception ex) {
 			Log.e(TAG, "Error while closing", ex);
 		}
+	}
+
+	public int safeParse(String intStr) {
+		if (intStr != null) {
+			try {
+				return Integer.parseInt(intStr);
+			} catch (Exception exception) {
+				// Number format
+			}
+		}
+		return 0;
 	}
 
 }
