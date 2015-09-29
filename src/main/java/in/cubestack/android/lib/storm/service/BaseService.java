@@ -4,6 +4,7 @@ import in.cubestack.android.lib.storm.CascadeTypes;
 import in.cubestack.android.lib.storm.core.ColumnMetaData;
 import in.cubestack.android.lib.storm.core.DatabaseMetaData;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
+import in.cubestack.android.lib.storm.core.MetaDataReader;
 import in.cubestack.android.lib.storm.core.QueryGenerator;
 import in.cubestack.android.lib.storm.core.RelationMetaData;
 import in.cubestack.android.lib.storm.core.StormException;
@@ -69,6 +70,11 @@ public class BaseService implements StormService {
 
 	public BaseService(Context context, DatabaseMetaData databaseMetaData) {
 		dbHelper = new StormDatabaseWrapper(context, databaseMetaData);
+		statementCache = new StatementCache();
+	}
+
+	public BaseService(Context context, Class<?> databaseClass) {
+		dbHelper = new StormDatabaseWrapper(context, new MetaDataReader().fetchDatabaseMetaData(databaseClass));
 		statementCache = new StatementCache();
 	}
 

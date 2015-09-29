@@ -52,6 +52,10 @@ public class AsyncSupportService {
 		baseService = new BaseService(context, databaseMetaData);
 	}
 
+	public AsyncSupportService(Context context, Class<?> databaseDefClass) {
+		baseService = new BaseService(context, databaseDefClass);
+	}
+
 	public <T> void save(final T entity, final StormCallBack<T> callBack) {
 		new AsyncTask<Void, Void, T>() {
 
