@@ -20,7 +20,8 @@ public class InsertTest {
 	 * @throws IllegalArgumentException
 	 */
 	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-		System.out.println(new QueryGenerator().insertQuery(EntityMetaDataCache.getMetaData(TestEntity.class)));
+		System.out.println(new QueryGenerator().insertQuery(EntityMetaDataCache.getMetaData(TestEntity.class), false));
+		System.out.println(new QueryGenerator().insertQuery(EntityMetaDataCache.getMetaData(TestEntity.class), true));
 
 	}
 

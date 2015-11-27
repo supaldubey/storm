@@ -146,8 +146,13 @@ public class QueryGenerator {
 		}
 	}
 
-	public String insertQuery(TableInformation tableInformation) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+	public String insertQuery(TableInformation tableInformation, boolean autoGenerate) throws IllegalArgumentException, IllegalAccessException,
+			InstantiationException {
 		StringBuilder insert = new StringBuilder(INSERT_INTO).append(tableInformation.getTableName()).append(OPEN_BRACES);
+
+		if (autoGenerate) {
+			insert.append(tableInformation.getPrimaryKeyData().getColumnName()).append(COMMA);
+		}
 
 		for (ColumnMetaData columnMetaData : tableInformation.getColumnMetaDataList()) {
 			insert.append(columnMetaData.getColumnName()).append(COMMA);
@@ -156,6 +161,10 @@ public class QueryGenerator {
 		insert = new StringBuilder(insert.substring(0, insert.length() - 1));
 
 		insert.append(CLOSE_BRACES).append(VALUES);
+
+		if (autoGenerate) {
+			insert.append(QUESTION_MARK).append(COMMA);
+		}
 
 		for (int columns = 0; columns < tableInformation.getColumnMetaDataList().size(); columns++) {
 			insert.append(QUESTION_MARK).append(COMMA);

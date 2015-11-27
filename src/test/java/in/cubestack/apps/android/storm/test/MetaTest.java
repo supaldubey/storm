@@ -13,6 +13,8 @@ import in.cubestack.android.lib.storm.criteria.Restrictions;
 import in.cubestack.android.lib.storm.criteria.StormProjection;
 import in.cubestack.android.lib.storm.criteria.StormRestrictions;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
@@ -32,12 +34,19 @@ public class MetaTest {
 		Restrictions restrictions = new StormRestrictions(EntityMetaDataCache.getMetaData(TestEntity.class));
 		Restriction restriction = restrictions.equals("name", "supal");
 		restriction = restrictions.and(restriction, restrictions.notNull("price"));
+		restriction = restrictions.or(restriction, restrictions.in("name", Arrays.asList("SUpal", "asas")));
 		Projection projection = new StormProjection(EntityMetaDataCache.getMetaData(TestEntity.class));
 
 		projection.add("id");
 		projection.add("name");
 
 		projection.sum("price");
+
+		System.out.println(restriction.values());
+
+		for (String val : restriction.values()) {
+			System.out.println(val);
+		}
 
 		Order order = Order.orderFor(TestEntity.class, new String[] { "id", "name" }, SortOrder.DESC);
 

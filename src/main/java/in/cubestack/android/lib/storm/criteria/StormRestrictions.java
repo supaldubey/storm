@@ -6,6 +6,8 @@ package in.cubestack.android.lib.storm.criteria;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.android.lib.storm.core.TableInformation;
 
+import java.util.List;
+
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
  * Copyright (c) 2014 CubeStack. Version built for Flash Back..
@@ -62,6 +64,11 @@ public class StormRestrictions implements Restrictions {
 	@Override
 	public Restriction greaterThen(String property, Object value) {
 		return new BasicRestriction(property, value, SQLOperator.GREATER_THEN, tableInformation);
+	}
+
+	@Override
+	public Restriction in(String property, List<String> value) {
+		return new BasicRestriction(property, value, SQLOperator.IN, tableInformation);
 	}
 
 	@Override

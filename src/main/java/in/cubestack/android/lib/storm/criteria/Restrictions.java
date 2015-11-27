@@ -3,6 +3,8 @@
  */
 package in.cubestack.android.lib.storm.criteria;
 
+import java.util.List;
+
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
  * Copyright (c) 2014 CubeStack. Version built for Flash Back..
@@ -50,4 +52,6 @@ public interface Restrictions {
 	Restriction notNull(String property);
 
 	Restriction forAll();
+
+	Restriction in(String property, List<String> value);
 }
