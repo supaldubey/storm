@@ -96,7 +96,11 @@ public class QueryGenerator {
 					sql.append(ON);
 					sql.append(relationMetaData.getAlias()).append(DOT).append(validateClause(relationMetaData.getJoinColumn(), reInformation));
 					sql.append(EQUALS);
-					sql.append(information.getAlias()).append(DOT).append(information.getPrimaryKeyData().getColumnName());
+					if(isEmpty(relationMetaData.getJoinOnColumn())) {
+						sql.append(information.getAlias()).append(DOT).append(information.getPrimaryKeyData().getColumnName());
+					} else {
+						sql.append(information.getAlias()).append(DOT).append(validateClause(relationMetaData.getJoinOnColumn(), information));
+					}
 				}
 			}
 		}
@@ -115,6 +119,10 @@ public class QueryGenerator {
 			sql = new StringBuilder(sql.substring(0, sql.length() - 1));
 		}
 		return sql.toString();
+	}
+
+	private boolean isEmpty(String joinOnColumn) {
+		return joinOnColumn == null || "".equals(joinOnColumn);
 	}
 
 	private String validateClause(String alias, TableInformation tableInformation) {

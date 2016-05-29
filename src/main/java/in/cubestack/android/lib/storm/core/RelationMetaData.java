@@ -38,7 +38,7 @@ public class RelationMetaData {
 	private Class<?> targetEntity;
 	private CascadeTypes[] cascadeTypes;
 	private String joinColumn;
-	private String dbJoinColumn;
+	private String joinOnColumn;
 	private String property;
 	private String alias;
 	private Class<?> backingImplementation;
@@ -65,13 +65,13 @@ public class RelationMetaData {
 	public void setJoinColumn(String joinColumn) {
 		this.joinColumn = joinColumn;
 	}
-	public String getDbJoinColumn() {
-		return dbJoinColumn;
+	public String getJoinOnColumn() {
+		return joinOnColumn;
 	}
 	
 	
-	public void setDbJoinColumn(String dbJoinColumn) {
-		this.dbJoinColumn = dbJoinColumn;
+	public void setJoinOnColumn(String dbJoinColumn) {
+		this.joinOnColumn = dbJoinColumn;
 	}
 	public String getProperty() {
 		return property;

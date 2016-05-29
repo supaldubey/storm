@@ -40,4 +40,5 @@ public @interface Relation {
     Class<?> targetEntity();
     CascadeTypes[] cascade() default {CascadeTypes.NONE};
     FetchType fetchType() default FetchType.EAGER;
+    String joinOnColumn() default "";
 }

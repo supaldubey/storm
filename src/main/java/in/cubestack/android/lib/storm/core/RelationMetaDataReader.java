@@ -34,6 +34,7 @@ public class RelationMetaDataReader {
 		relationMetaData.setAlias(aliasGenerator.generateAlias(relation.targetEntity()));
 		relationMetaData.setCascadeTypes(relation.cascade());
 		relationMetaData.setJoinColumn(relation.joinColumn());
+		relationMetaData.setJoinOnColumn(relation.joinOnColumn());
 		relationMetaData.setProperty(field.getName());
 		relationMetaData.setFetchType(relation.fetchType());
 		relationMetaData.setTargetEntity(relation.targetEntity());
