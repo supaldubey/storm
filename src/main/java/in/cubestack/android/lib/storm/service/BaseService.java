@@ -173,13 +173,26 @@ public class BaseService implements StormService {
 							return;
 						}
 						for (Object obj : (Collection<Object>) Reflections.getFieldValue(entity, relationMetaData.getProperty())) {
-							Reflections.setField(obj, relationMetaData.getJoinColumn(),
-									Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
+							if(null != relationMetaData.getJoinOnColumn() &&  ! "".equals(relationMetaData.getJoinOnColumn())) {
+								Reflections.setField(obj, relationMetaData.getJoinColumn(),
+										Reflections.getFieldValue(entity, relationMetaData.getJoinOnColumn()));
+							} else {
+								Reflections.setField(obj, relationMetaData.getJoinColumn(),
+										Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
+							}
 							save(obj, true);
 						}
 					} else {
 						Object kid = Reflections.getFieldValue(entity, relationMetaData.getAlias());
 						if (kid != null) {
+							if(null != relationMetaData.getJoinOnColumn() &&  ! "".equals(relationMetaData.getJoinOnColumn())) {
+								Reflections.setField(kid, relationMetaData.getJoinColumn(),
+										Reflections.getFieldValue(entity, relationMetaData.getJoinOnColumn()));
+							} else {
+								Reflections.setField(kid, relationMetaData.getJoinColumn(),
+										Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));	
+							}
+							
 							Reflections.setField(kid, relationMetaData.getJoinColumn(),
 									Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias()));
 							save(kid, true);
