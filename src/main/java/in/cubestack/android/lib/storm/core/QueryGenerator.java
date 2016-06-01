@@ -158,7 +158,7 @@ public class QueryGenerator {
 			InstantiationException {
 		StringBuilder insert = new StringBuilder(INSERT_INTO).append(tableInformation.getTableName()).append(OPEN_BRACES);
 
-		if (autoGenerate) {
+		if ( ! autoGenerate) {
 			insert.append(tableInformation.getPrimaryKeyData().getColumnName()).append(COMMA);
 		}
 
@@ -170,7 +170,7 @@ public class QueryGenerator {
 
 		insert.append(CLOSE_BRACES).append(VALUES);
 
-		if (autoGenerate) {
+		if (! autoGenerate) {
 			insert.append(QUESTION_MARK).append(COMMA);
 		}
 
