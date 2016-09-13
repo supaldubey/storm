@@ -383,9 +383,16 @@ public class BaseService implements StormService {
 					}
 				}
 				if (isDeletion) {
-					delete(relationMetaData.getTargetEntity(),
-							restrictionsFor(relationMetaData.getTargetEntity()).equals(relationMetaData.getJoinColumn(),
-									Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias())));
+					if("".equals(relationMetaData.getJoinOnColumn()) || relationMetaData.getJoinOnColumn() == null ) {
+						delete(relationMetaData.getTargetEntity(),
+								restrictionsFor(relationMetaData.getTargetEntity()).equals(relationMetaData.getJoinColumn(),
+										Reflections.getFieldValue(entity, tableInformation.getPrimaryKeyData().getAlias())));
+					} else {
+						delete(relationMetaData.getTargetEntity(),
+								restrictionsFor(relationMetaData.getTargetEntity()).equals(relationMetaData.getJoinColumn(),
+										Reflections.getFieldValue(entity, relationMetaData.getJoinOnColumn())));
+					}
+					
 				}
 			}
 		}
