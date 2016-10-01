@@ -65,11 +65,12 @@ public class StormDatabaseWrapper extends SQLiteOpenHelper {
 		try {
 			for (Class<?> table : metaData.getTables()) {
 				TableInformation information = EntityMetaDataCache.getMetaData(table);
-				if (information.getTableVersion() == metaData.getVersion()) {
+				//If table version is current DB version or it was added in earlier version.
+				if ( (information.getTableVersion() == metaData.getVersion()) || (oldVersion <= information.getTableVersion()) ) {
 					// Create this table now ..
 					db.execSQL(tablegenerator.createSQLTableQuery(information));
 				} else {
-					List<String> sqls = tablegenerator.alterSQLTableQuery(information, newVersion);
+					List<String> sqls = tablegenerator.alterSQLTableQuery(information, oldVersion, newVersion);
 					if (sqls != null) {
 						for (String sql : sqls) {
 							try {
