@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import in.cubestack.android.lib.storm.lifecycle.LifeCycleHandler;
+
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -32,6 +34,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface LifeCycle {
 
-	Class<?> handler();
+	Class<? extends LifeCycleHandler<?>> handler();
 	boolean async() default false;
 }

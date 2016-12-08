@@ -3,10 +3,11 @@
  */
 package in.cubestack.android.lib.storm.criteria;
 
-import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
-import in.cubestack.android.lib.storm.core.TableInformation;
-
 import java.util.List;
+
+import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
+import in.cubestack.android.lib.storm.core.StormRuntimeException;
+import in.cubestack.android.lib.storm.core.TableInformation;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -33,6 +34,7 @@ import java.util.List;
 public class StormRestrictions implements Restrictions {
 
 	private TableInformation tableInformation;
+	
 
 	public StormRestrictions(TableInformation tableInformation) {
 		this.tableInformation = tableInformation;
@@ -42,7 +44,7 @@ public class StormRestrictions implements Restrictions {
 		try {
 			return new StormRestrictions(EntityMetaDataCache.getMetaData(entity));
 		} catch (Exception ex) {
-			throw new RuntimeException("Invalid entity, please check your mapppings for " + entity, ex);
+			throw new StormRuntimeException("Invalid entity, please check your mapppings for " + entity.getName(), ex);
 		}
 	}
 

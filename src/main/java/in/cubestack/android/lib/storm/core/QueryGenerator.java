@@ -53,7 +53,7 @@ public class QueryGenerator {
 
 	private Class<?> entityClass;
 
-	public String rawQuery(Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+	public String rawQuery(Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection, null);
 	}
 
@@ -68,7 +68,7 @@ public class QueryGenerator {
 	}
 
 	public String rawQuery(TableInformation information, Restriction restriction, Projection projection, Order order) throws IllegalArgumentException,
-			IllegalAccessException, InstantiationException {
+			IllegalAccessException, InstantiationException, StormException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(SELECT_INIT);
 		generateColumnNames(information, sql, projection);

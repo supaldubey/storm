@@ -1,11 +1,11 @@
 package in.cubestack.android.lib.storm.criteria;
 
+import java.util.Collection;
+
 import in.cubestack.android.lib.storm.FieldType;
 import in.cubestack.android.lib.storm.core.ColumnMetaData;
 import in.cubestack.android.lib.storm.core.TableInformation;
 import in.cubestack.android.lib.storm.fields.FieldStrategyHandler;
-
-import java.util.Collection;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -42,10 +42,8 @@ public class BasicRestriction extends PageableRestriction {
 		this.value = value;
 		this.symbol = symbol;
 		this.tableInfo = tableInformation;
-
-		if (tableInfo.getColumnName(property) == null) {
-			throw new RuntimeException("No column found mapped to property " + property);
-		}
+		
+		validate(tableInfo, property);
 	}
 
 	@Override
@@ -53,7 +51,7 @@ public class BasicRestriction extends PageableRestriction {
 		ColumnMetaData columnMetaData = tableInfo.getColumnMetaData(property);
 		FieldType type = columnMetaData.getFiledTypes();
 		return FieldStrategyHandler.handlerFor(type).buildSqlString(tableInfo.getAlias() + "." + columnMetaData.getColumnName(), symbol.symbol(), value);
-	}
+	} 
 
 	@Override
 	public boolean valueStored() {

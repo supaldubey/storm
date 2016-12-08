@@ -1,10 +1,18 @@
-package in.cubestack.android.lib.storm.criteria;
+/**
+ * 
+ */
+package in.cubestack.android.lib.storm.core;
 
-import in.cubestack.android.lib.storm.core.TableInformation;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import in.cubestack.apps.android.storm.entitites.TestChild;
+import in.cubestack.apps.android.storm.entitites.TestEntity;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014-15  CubeStack. Built for performance, scalability and ease to use.
+ * Copyright (c) 2016  CubeStack. Built for performance, scalability and ease to use.
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -24,39 +32,31 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class NullBasedRestriction extends PageableRestriction {
-
-	private TableInformation tableInformation;
-	private String property;
-	private boolean isNull;
+public class AliasGeneratorTest {
 	
-	public NullBasedRestriction(String property, boolean isNull, TableInformation tableInformation) {
-		this.tableInformation= tableInformation;
-		this.property = property;
-		this.isNull = isNull;
-		
-		validate(tableInformation, property);
+	private AliasGenerator aliasGenerator;
+	
+	@Before
+	public void init() {
+		aliasGenerator = new AliasGenerator();
 	}
 	
-	@Override
-	public String toSqlString() {
-		
-		String column = tableInformation.getColumnName(property);
-		column = tableInformation.getAlias() + "." + column;
-		
-		if(isNull) {
-			return column +" IS NULL ";
-		}
-		return column +" NOT NULL ";
+	@Test
+	public void testSetup() {
+		Assert.assertTrue(aliasGenerator != null);
+	}
+	
+	@Test
+	public void testAlias() {
+		Assert.assertEquals(aliasGenerator.generateAlias(TestEntity.class), "Tetit1");
+		Assert.assertEquals(aliasGenerator.generateAlias(TestChild.class), "Tehil2");
+	}
+	
+	
+	@Test
+	public void testAlias_RetainAlias() {
+		Assert.assertEquals(aliasGenerator.generateAlias(TestEntity.class), "Tetit1");
+		Assert.assertEquals(aliasGenerator.generateAlias(TestChild.class), "Tehil2");
 	}
 
-	@Override
-	public boolean valueStored() {
-		return false;
-	}
-
-	@Override
-	public String[] values() {
-		return null;
-	}
 }

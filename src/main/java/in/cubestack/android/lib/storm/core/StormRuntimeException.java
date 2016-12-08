@@ -1,6 +1,7 @@
-package in.cubestack.android.lib.storm.criteria;
-
-import in.cubestack.android.lib.storm.core.TableInformation;
+/**
+ * 
+ */
+package in.cubestack.android.lib.storm.core;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -24,39 +25,19 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class NullBasedRestriction extends PageableRestriction {
+public class StormRuntimeException extends RuntimeException {
 
-	private TableInformation tableInformation;
-	private String property;
-	private boolean isNull;
+	private static final long serialVersionUID = -563476450614494464L;
+
 	
-	public NullBasedRestriction(String property, boolean isNull, TableInformation tableInformation) {
-		this.tableInformation= tableInformation;
-		this.property = property;
-		this.isNull = isNull;
-		
-		validate(tableInformation, property);
+	public StormRuntimeException(String msg) {
+		super(msg);
+	}
+
+
+	public StormRuntimeException(String msg, Exception ex) {
+		super(msg, ex);
 	}
 	
-	@Override
-	public String toSqlString() {
-		
-		String column = tableInformation.getColumnName(property);
-		column = tableInformation.getAlias() + "." + column;
-		
-		if(isNull) {
-			return column +" IS NULL ";
-		}
-		return column +" NOT NULL ";
-	}
-
-	@Override
-	public boolean valueStored() {
-		return false;
-	}
-
-	@Override
-	public String[] values() {
-		return null;
-	}
+	
 }

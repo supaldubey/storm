@@ -4,6 +4,7 @@ import in.cubestack.android.lib.storm.FetchType;
 import in.cubestack.android.lib.storm.core.ColumnMetaData;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.android.lib.storm.core.RelationMetaData;
+import in.cubestack.android.lib.storm.core.StormException;
 import in.cubestack.android.lib.storm.core.TableInformation;
 import in.cubestack.android.lib.storm.fields.FieldStrategyHandler;
 import in.cubestack.android.lib.storm.util.Reflections;
@@ -61,18 +62,15 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 
 			mapRelations(cursor, tableInformation, instance, columnIndex);
 
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+		} catch (Exception e) {
+			//There is nothing much that can be done, so ignoring and printing stack
 			e.printStackTrace();
 		}
 		return instance;
 	}
 
 	private void mapRelations(Cursor cursor, TableInformation tableInformation, E instance, int columnIndex) throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException, InstantiationException {
+			IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		ColumnMetaData metaData = tableInformation.getPrimaryKeyData();
 
 		Object priyamryKeyVal = Reflections.getFieldValue(instance, tableInformation.getPrimaryKeyData().getAlias());
@@ -103,7 +101,7 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 
 	@SuppressWarnings("unchecked")
 	private int mapRelation(RelationMetaData relationMetaData, Cursor cursor, E instance, int columnIndex) throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException, InstantiationException {
+			IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		String prop = relationMetaData.getProperty();
 		Object entity = relationMetaData.getTargetEntity().newInstance();
 
@@ -150,7 +148,7 @@ public class ReflectionRowMapper<E> implements RowMapper<E> {
 	
 	
 	@SuppressWarnings("unchecked")
-	private boolean exists(Object valInstance, Object entity, RelationMetaData metaData) throws IllegalArgumentException, IllegalAccessException, InstantiationException, SecurityException, NoSuchFieldException {
+	private boolean exists(Object valInstance, Object entity, RelationMetaData metaData) throws IllegalArgumentException, IllegalAccessException, InstantiationException, SecurityException, NoSuchFieldException, StormException {
 		TableInformation information = EntityMetaDataCache.getMetaData(entity.getClass());
 		String primaryKeyAlias = information.getPrimaryKeyData().getAlias();
 		if(metaData.isCollectionBacked()) {

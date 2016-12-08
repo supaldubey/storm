@@ -1,6 +1,7 @@
 package in.cubestack.android.lib.storm.criteria;
 
 import in.cubestack.android.lib.storm.core.ColumnMetaData;
+import in.cubestack.android.lib.storm.core.StormRuntimeException;
 import in.cubestack.android.lib.storm.core.TableInformation;
 
 /**
@@ -36,14 +37,15 @@ public class SimpleSqlFunction implements SQLFunction {
 		this.property = property;
 		this.functionType = functionType;
 		this.tableInformation = tableInformation;
+		if (tableInformation.getColumnName(property) == null) {
+			throw new StormRuntimeException(
+					"No column found mapped to property " + property + " in Entity " + this.tableInformation.getMappedClass());
+		}
 	}
 	
 	@Override
 	public String toSqlString() {
 		ColumnMetaData column = tableInformation.getColumnMetaData(property);
-		if(column == null) {
-			throw new RuntimeException("No column mapped to property " + property);
-		}
 		return functionType.type() +"(" + tableInformation.getAlias() + '.' + column.getColumnName() + " ) ";
 	}
 }

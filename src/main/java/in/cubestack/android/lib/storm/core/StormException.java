@@ -33,4 +33,13 @@ public class StormException extends Exception {
 		super(throwable);
 	}
 	
+	public StormException(String msg) {
+		super(msg);
+	}
+
+	public StormException(String msg, Exception exception) {
+		super(msg, exception);
+	}
+	
+	
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package in.cubestack.apps.android.storm.test;
+package in.cubestack.apps.android.storm.entitites;
 
 import in.cubestack.android.lib.storm.SortOrder;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;

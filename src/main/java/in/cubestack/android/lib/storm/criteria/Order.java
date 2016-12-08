@@ -4,8 +4,10 @@
 package in.cubestack.android.lib.storm.criteria;
 
 import in.cubestack.android.lib.storm.SortOrder;
+import in.cubestack.android.lib.storm.core.ColumnMetaData;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.android.lib.storm.core.QueryGenerator;
+import in.cubestack.android.lib.storm.core.StormRuntimeException;
 import in.cubestack.android.lib.storm.core.TableInformation;
 
 /**
@@ -17,6 +19,7 @@ public class Order {
 	private SortOrder sortOrder;
 	private String orderSql;
 	private TableInformation information;
+	private QueryGenerator queryGenerator = new QueryGenerator();
 
 	public Order(SortOrder order, TableInformation information) {
 		this.sortOrder = order;
@@ -25,16 +28,27 @@ public class Order {
 
 	public static <T> Order orderFor(Class<T> entity, String[] props, SortOrder sortOrder) {
 		try {
-			Order order = new Order(sortOrder, EntityMetaDataCache.getMetaData(entity));
+			TableInformation information = EntityMetaDataCache.getMetaData(entity);
+			Order order = new Order(sortOrder, information);
+			validate(props, information);
 			order.addProperty(props);
 			return order;
 		} catch (Exception e) {
-			throw new RuntimeException("Invalid entity, please check your mapppings for " + entity, e);
+			throw new StormRuntimeException("Invalid entity, please check your mapppings for " + entity, e);
+		}
+	}
+
+	private static void validate(String[] props, TableInformation tabInformation) {
+		for(String prop: props) {
+			ColumnMetaData columnInfo = tabInformation.getColumnMetaData(prop);
+			if(columnInfo == null) {
+				throw new StormRuntimeException("Could not find column mapped to alias " + prop +". Pl check your mapppings for " + tabInformation.getMappedClass());
+			}
 		}
 	}
 
 	public void addProperty(String[] props) {
-		orderSql = new QueryGenerator().orderBy(props, information, sortOrder);
+		orderSql = queryGenerator.orderBy(props, information, sortOrder);
 	}
 
 	public String orderSql() {

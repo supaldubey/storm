@@ -1,4 +1,4 @@
-package in.cubestack.apps.android.storm.test;
+package in.cubestack.apps.android.storm.entitites;
 
 import in.cubestack.android.lib.storm.lifecycle.LifeCycleHandler;
 

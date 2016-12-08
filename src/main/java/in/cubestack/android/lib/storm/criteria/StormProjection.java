@@ -1,6 +1,8 @@
 package in.cubestack.android.lib.storm.criteria;
 
 import in.cubestack.android.lib.storm.core.ColumnMetaData;
+import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
+import in.cubestack.android.lib.storm.core.StormException;
 import in.cubestack.android.lib.storm.core.TableInformation;
 
 import java.util.LinkedList;
@@ -39,6 +41,14 @@ public class StormProjection implements Projection {
 		this.information = information;
 	}
 
+	public static Projection projectionFor(Class<?> clazz) throws StormException {
+		try {
+			return new StormProjection(EntityMetaDataCache.getMetaData(clazz));
+		} catch (Exception exception) {
+			throw new StormException("Unable to generate Projection for class " + clazz.getName(), exception);
+		}
+	}
+	
 	@Override
 	public Projection add(String property) {
 		ColumnMetaData columnMetaData = information.getColumnMetaData(property);

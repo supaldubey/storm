@@ -3,6 +3,9 @@
  */
 package in.cubestack.android.lib.storm.criteria;
 
+import in.cubestack.android.lib.storm.core.StormRuntimeException;
+import in.cubestack.android.lib.storm.core.TableInformation;
+
 /**
  * @author supal
  *
@@ -17,10 +20,17 @@ public abstract class PageableRestriction implements Restriction {
 
 	private int offset;
 	private int limit;
+	
+	protected void validate(TableInformation tableInfo, String property) {
+		if (tableInfo.getColumnName(property) == null) {
+			throw new StormRuntimeException(
+					"No column found mapped to property " + property + " in Entity " + tableInfo.getMappedClass());
+		}
+	}
 
 	public Restriction page(int page) {
 		if (page < 1) {
-			throw new RuntimeException("Page Number cannot be less than 1");
+			throw new StormRuntimeException("Page Number cannot be less than 1");
 		}
 		offset = (page - 1) * PAGE_SIZE;
 		limit = PAGE_SIZE;

@@ -38,7 +38,7 @@ public class EntityMetaDataCache {
         cache.put(entityClass.getName(), metaData);
     }
 
-    public static TableInformation getMetaData(Class<?> entityClass) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+    public static TableInformation getMetaData(Class<?> entityClass) throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
         TableInformation tableInformation = cache.get(entityClass.getName());
         if (tableInformation == null) {
             synchronized (EntityMetaDataCache.class) {
