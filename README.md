@@ -1,9 +1,10 @@
 A small and FAST Java ORM solution for Android SQLite database. Currently being used across projects from Enterprise to Open Source
 
-Storm was created with intention to be easy to use ORM solution for Android platform. While working for a corporate client we realized that the available tools either expect 
-too much to be done manually, or are super-complicated or just want entities to extend their own.
+Storm was created with intention to be easy to use ORM solution for Android platform. While working for a corporate client we realised that the available tools either expect too much to be done manually, or are super-complicated or just want entities to extend their own.
 
-The target was to have something which is easy to use, super-fast, convineant and does not asks you to write all queries, updates, creates or even to extend their models.
+The target was to have something which is easy to use, super-fast,convenient and does not asks you to write all queries, updates, creates or even to extend their models.
+
+
 
 ### Cubestack Apps using Storm
  * [Coins - Shared & personal Expense Manager with Offline and Sync Capabilities] (https://play.google.com/store/apps/details?id=in.cubestack.coins)
