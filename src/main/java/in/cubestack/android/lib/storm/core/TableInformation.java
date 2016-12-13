@@ -51,13 +51,6 @@ public class TableInformation {
 		this.tableName = tableName;
 	}
 
-	/**
-	 * @param columnMetaDataList
-	 *            the columnMetaDataList to set
-	 */
-	public void setColumnMetaDataList(List<ColumnMetaData> columnMetaDataList) {
-		this.columnMetaDataList = columnMetaDataList;
-	}
 
 	/**
 	 * @return the columnMetaDataList
@@ -91,16 +84,14 @@ public class TableInformation {
 
 	@Override
 	public String toString() {
-		return "[TableInfo {name=" + tableName + "}, {primaryKey=" + primaryKeyData.getAlias() + "/" + primaryKeyData.getColumnName() + "}]";
+		return "[TableInfo {name=" + tableName + "}, {primaryKey=" + primaryKeyData.getAlias() + "/" + primaryKeyData.getColumnName() + "\n "
+				+ "Mapped class = "  + getMappedClass() + "}]";
 	}
 
 	public List<RelationMetaData> getRelations() {
 		return relations;
 	}
 
-	public void setRelations(List<RelationMetaData> relations) {
-		this.relations = relations;
-	}
 
 	public String getAlias() {
 		return alias;

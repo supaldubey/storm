@@ -35,12 +35,30 @@ public class Reflections {
         try {
             Field field = doGetIt(fieldName, object.getClass());
             field.setAccessible(true);
-
+            
             field.set(object, value);
             field.setAccessible(false);
         } catch (Exception ex) {
             Log.e("ERRORR", "Error while setting " + fieldName + "of " + object.getClass() + " with value " + value, ex);
         }
+    }
+    
+    public static Object getFieldStatic(Class<?> object, String fieldName) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+            Field field = doGetIt(fieldName, object);
+            
+            field.setAccessible(true);
+            Object returnValue = (Object) field.get(null);
+            field.setAccessible(false);
+            
+            return returnValue;
+    }
+    
+    public static boolean isValidField(Class<?> targetClass, String fieldName)  throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    	Field field = doGetIt(fieldName, targetClass);
+    	if(field == null) {
+    		return false;
+    	}
+    	return true;
     }
 
     public static Object getFieldValue(Object object, String fieldName) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
@@ -52,20 +70,6 @@ public class Reflections {
         return returnValue;
     }
 
-    public static Object copyValues(Object sourceObject, Class<?> targetClass) throws Exception {
-        Object targetValue = null;
-
-        targetValue = (Object) targetClass.newInstance();
-        for (Field field : sourceObject.getClass().getDeclaredFields()) {
-            try {
-                setField(targetValue, field.getName(), getFieldValue(sourceObject, field.getName()));
-            } catch (NoSuchFieldException e) {
-                //IgnoreLogging.logInfo(ReflectionUtil.class, "Ignored Field " + field.getName());
-            }
-        }
-
-        return targetValue;
-    }
 
 
     private static Field doGetIt(String name, Class<?> clazz) {

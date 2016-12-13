@@ -26,12 +26,11 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  */
 public class NullBasedRestriction extends PageableRestriction {
 
-	private TableInformation tableInformation;
 	private String property;
 	private boolean isNull;
 	
 	public NullBasedRestriction(String property, boolean isNull, TableInformation tableInformation) {
-		this.tableInformation= tableInformation;
+		setTableInfo(tableInformation);
 		this.property = property;
 		this.isNull = isNull;
 		
@@ -41,8 +40,8 @@ public class NullBasedRestriction extends PageableRestriction {
 	@Override
 	public String toSqlString() {
 		
-		String column = tableInformation.getColumnName(property);
-		column = tableInformation.getAlias() + "." + column;
+		String column = getTableInformation().getColumnName(property);
+		column = getTableInformation().getAlias() + "." + column;
 		
 		if(isNull) {
 			return column +" IS NULL ";
@@ -58,5 +57,11 @@ public class NullBasedRestriction extends PageableRestriction {
 	@Override
 	public String[] values() {
 		return null;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "[" + property  +SPACES +"] | IS NULL?: " + isNull;
 	}
 }

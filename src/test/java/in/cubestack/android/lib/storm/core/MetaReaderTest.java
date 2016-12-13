@@ -11,6 +11,7 @@ import in.cubestack.android.lib.storm.FieldType;
 import in.cubestack.android.lib.storm.annotation.Column;
 import in.cubestack.android.lib.storm.annotation.LifeCycle;
 import in.cubestack.android.lib.storm.annotation.PrimaryKey;
+import in.cubestack.android.lib.storm.annotation.Relation;
 import in.cubestack.android.lib.storm.annotation.Table;
 import in.cubestack.apps.android.storm.entitites.TestEntity;
 import in.cubestack.apps.android.storm.entitites.TestHandler;
@@ -50,6 +51,23 @@ public class MetaReaderTest {
 	public void entityNoAnnotation() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		dataReader.readAnnotations(EntityNoAnnotation.class, new AliasGenerator());
 	}
+	
+	
+	@Test(expected=StormRuntimeException.class)
+	public void entityAnnotation_JoinError() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
+		dataReader.readAnnotations(EntityJoinMissing.class, new AliasGenerator());
+	}
+	
+	
+	
+	
+	@Test(expected=StormException.class)
+	public void entityAnnotation_JoinColumnNameError() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
+		dataReader.readAnnotations(EntityJoinNameError.class, new AliasGenerator());
+	}
+	
+	
+	
 	
 	@Test
 	public void entityNoAnnotation_ExceptionMsg() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
@@ -103,6 +121,13 @@ public class MetaReaderTest {
 	}
 	
 	@Test
+	public void entitySuccess_AutoGen() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
+		TableInformation info = dataReader.readAnnotations(EntityPrimaryKey.class, new AliasGenerator());
+		Assert.assertNotNull(info);
+	}
+	
+	
+	@Test
 	public void readDb() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		DatabaseMetaData meta = dataReader.fetchDatabaseMetaData(Database.class);
 		Assert.assertNotNull(meta);
@@ -114,7 +139,7 @@ public class MetaReaderTest {
 	
 	@Table(name = "ENTITY_PK")
 	class EntityPrimaryKey {
-		 @PrimaryKey
+		 @PrimaryKey(autoGenrateKey=false)
 		 @Column(name="ID", type = FieldType.INTEGER)
 		 private int id;
 	 }
@@ -134,6 +159,58 @@ public class MetaReaderTest {
 		 @Column(name="ID", type = FieldType.INTEGER)
 		 private int id;
 	 }
+	
+	@Table(name = "ENTITY_PK")
+	class EntityJoined {
+		 @PrimaryKey
+		 @Column(name="ID", type = FieldType.INTEGER)
+		 private int id;
+		 
+		 @Column(name="PKID", type = FieldType.INTEGER)
+		 private int pkId;
+	 }
+	
+	@Table(name = "ENTITY_PK")
+	class EntityJoinMissing {
+		 @PrimaryKey
+		 @Column(name="ID", type = FieldType.INTEGER)
+		 private int id;
+		 
+		 @Relation(joinColumn="", targetEntity=EntityJoined.class, joinOnColumn = "id")
+		 EntityJoined entityJoined;
+	 }
+	
+	@Table(name = "ENTITY_PK")
+	class EntityJoinOnMissing {
+		 @PrimaryKey
+		 @Column(name="ID", type = FieldType.INTEGER)
+		 private int id;
+		 
+		 @Relation(joinColumn="id", targetEntity=EntityJoined.class, joinOnColumn = "")
+		 EntityJoined entityJoined;
+	 }
+	
+	@Table(name = "ENTITY_PK")
+	class EntityJoinOnNameError {
+		 @PrimaryKey
+		 @Column(name="ID", type = FieldType.INTEGER)
+		 private int id;
+		 
+		 @Relation(joinColumn="id", targetEntity=EntityJoined.class, joinOnColumn = "SAD")
+		 EntityJoined entityJoined;
+	 }
+	
+	@Table(name = "ENTITY_PK")
+	class EntityJoinNameError {
+		 @PrimaryKey
+		 @Column(name="ID", type = FieldType.INTEGER)
+		 private int id;
+		 
+		 @Relation(joinColumn="SAD", targetEntity=EntityJoined.class, joinOnColumn = "id")
+		 EntityJoined entityJoined;
+	 }
+	
+	
 	
 	
 	 class EntityNoAnnotation {

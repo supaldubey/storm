@@ -7,8 +7,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import in.cubestack.android.lib.criteria.AllCriteriaTests;
 import in.cubestack.android.lib.storm.core.AllCoreTests;
+import in.cubestack.android.lib.storm.criteria.AllCriteriaTests;
+import in.cubestack.android.lib.storm.service.AllServiceTests;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -35,7 +36,8 @@ import in.cubestack.android.lib.storm.core.AllCoreTests;
 @RunWith(Suite.class)
 @SuiteClasses({
 				AllCoreTests.class,
-				AllCriteriaTests.class
+				AllCriteriaTests.class,
+				AllServiceTests.class
 			})
 public class AllTests {
 

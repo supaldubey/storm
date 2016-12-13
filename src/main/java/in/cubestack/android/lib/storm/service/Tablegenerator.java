@@ -38,9 +38,6 @@ public class Tablegenerator {
 
 
     public String createSQLTableQuery(TableInformation tableInformation) {
-        if (tableInformation.getTableName() == null) {
-            return "";
-        }
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("CREATE TABLE " + tableInformation.getTableName().toUpperCase() + " ("
                 + tableInformation.getPrimaryKeyData().getColumnName());
@@ -63,13 +60,15 @@ public class Tablegenerator {
                 stringBuilder.append("TEXT").append(SPACE);
                 break;
             case INTEGER:
+            case LONG:
                 stringBuilder.append("INTEGER").append(SPACE);
                 break;
-            case REAL:
+            case REAL: 
+            case DOUBLE: 
                 stringBuilder.append("REAL").append(SPACE);
                 break;
             default:
-                stringBuilder.append(columnMetaData.getFiledTypes()).append(SPACE);
+                stringBuilder.append("NONE").append(SPACE);
         }
         stringBuilder.append(COMMA);
     }
@@ -91,9 +90,9 @@ public class Tablegenerator {
                 query = builder.substring(0, builder.length() - 1);
                 statements.add(query);
             }
-            if (columnsToadd > 0) {
-                return statements;
-            }
+        }
+        if (columnsToadd > 0) {
+            return statements;
         }
         return null;
     }

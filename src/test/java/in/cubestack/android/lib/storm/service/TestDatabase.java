@@ -1,11 +1,18 @@
 /**
  * 
  */
-package in.cubestack.android.lib.criteria;
+package in.cubestack.android.lib.storm.service;
+
+import in.cubestack.android.lib.storm.annotation.Database;
+import in.cubestack.apps.android.storm.entitites.TestAnother;
+import in.cubestack.apps.android.storm.entitites.TestChild;
+import in.cubestack.apps.android.storm.entitites.TestEntity;
+import in.cubestack.apps.android.storm.entitites.TestRandomEntity;
+import in.cubestack.apps.android.storm.entitites.TestSetBasedEntity;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014 CubeStack. Version built for Flash Back..
+ * Copyright (c) 2011 Supal Dubey, supal.dubey@gmail.com
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +32,8 @@ package in.cubestack.android.lib.criteria;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class ProjectionTest {
+@Database (name = "TEST_DB1", tables = { TestEntity.class, 
+		TestChild.class, TestSetBasedEntity.class, TestRandomEntity.class, TestAnother.class})
+public class TestDatabase {
 
 }

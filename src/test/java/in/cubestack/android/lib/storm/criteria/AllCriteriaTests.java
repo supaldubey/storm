@@ -1,7 +1,7 @@
 /**
  * 
  */
-package in.cubestack.android.lib.criteria;
+package in.cubestack.android.lib.storm.criteria;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -34,7 +34,9 @@ import org.junit.runners.Suite.SuiteClasses;
 			LikeRestrictionTest.class,
 			NullRestrictionTest.class,
 			SQLFunctionsTest.class,
-			StormRestrictionTest.class
+			StormRestrictionTest.class,
+			ProjectionTest.class,
+			MultiCriteriaTests.class
 	})
 public class AllCriteriaTests {
 

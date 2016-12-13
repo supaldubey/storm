@@ -1,19 +1,18 @@
 /**
  * 
  */
-package in.cubestack.android.lib.criteria;
+package in.cubestack.android.lib.storm.criteria;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import in.cubestack.android.lib.storm.core.AliasGenerator;
 import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
 import in.cubestack.android.lib.storm.core.StormException;
 import in.cubestack.android.lib.storm.core.StormRuntimeException;
 import in.cubestack.android.lib.storm.criteria.FunctionType;
 import in.cubestack.android.lib.storm.criteria.SQLFunction;
 import in.cubestack.android.lib.storm.criteria.SimpleSqlFunction;
+import in.cubestack.apps.android.storm.entitites.RestrictionTestEntity;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -40,12 +39,6 @@ import in.cubestack.android.lib.storm.criteria.SimpleSqlFunction;
 public class SQLFunctionsTest {
 	
 	private SQLFunction function;
-	private AliasGenerator aliasGenerator;
-	
-	@Before
-	public void init(){
-		aliasGenerator = new AliasGenerator();
-	}
 	
 	@Test(expected=StormRuntimeException.class)
 	public void testFailure_columnName() throws Exception {
@@ -66,7 +59,7 @@ public class SQLFunctionsTest {
 	@Test
 	public void basic() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		function = new SimpleSqlFunction("name", FunctionType.COUNT, EntityMetaDataCache.getMetaData(RestrictionTestEntity.class));
-		Assert.assertEquals(function.toSqlString(), "count(" + aliasGenerator.generateAlias(RestrictionTestEntity.class) + ".NAME ) ");
+		Assert.assertEquals(function.toSqlString(), "count(" + EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias() + ".NAME ) ");
 	}
 
 	

@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 			AliasGeneratorTest.class,
-			MetaReaderTest.class
+			MetaReaderTest.class,
+			QueryGeneratorTest.class
 	})
 public class AllCoreTests {
 

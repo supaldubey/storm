@@ -1,16 +1,6 @@
 /**
- *
- */
-package in.cubestack.android.lib.storm.annotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014-15  CubeStack. Built for performance, scalability and ease to use.
+ * Copyright (c) 2016  CubeStack. Built for performance, scalability and ease to use.
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -30,10 +20,29 @@ import java.lang.annotation.Target;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package in.cubestack.android.lib.storm.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Defines a logical SQLite table for Storm. <br> 
+ * 
+ * <pre>
+ * @Table(name="TABLE_NM", version = 2)
+ * class Table {}
+ * </pre>
+ * <br>
+ * The version defined here should match the version defined in {@code @Database} annotation for it to be created. <br>
+ * If there is a mismatch, the table would be altered using the version defined in @Column annotation. 
+ * 
+ * @author Supal Dubey
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Table {
     String name();
-    String schema() default "";
     int version() default 1;
 }

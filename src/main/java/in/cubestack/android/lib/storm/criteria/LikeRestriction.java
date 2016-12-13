@@ -27,27 +27,27 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  */
 public class LikeRestriction extends PageableRestriction {
 
+	private static final String LIKE = "LIKE";
 	private String property;
 	private Object value;
 	private boolean ignore;
-	private TableInformation tableInfo;
 
 	public LikeRestriction(String property, Object value, boolean ignoreCase, TableInformation information) {
 		this.property = property;
 		this.value = value;
 		this.ignore = ignoreCase;
-		this.tableInfo = information;
+		setTableInfo(information);
 
-		validate(tableInfo, property);
+		validate(information, property);
 	}
 
 	@Override
 	public String toSqlString() {
-		String column = tableInfo.getColumnName(property);
+		String column = getTableInformation().getColumnName(property);
 		if (value == null) {
-			return tableInfo.getAlias() + "." + column + " IS NULL ";
+			return getTableInformation().getAlias() + "." + column + " IS NULL ";
 		}
-		column = tableInfo.getAlias() + "." + column;
+		column = getTableInformation().getAlias() + "." + column;
 		if (ignore) {
 			return "lower(" + column + ") LIKE ? ";
 		} else {
@@ -66,6 +66,11 @@ public class LikeRestriction extends PageableRestriction {
 			value = value.toString().toLowerCase();
 		}
 		return new String[] { value != null ? value.toString() : null };
+	}
+	
+	@Override
+	public String toString() {
+		return "[" + property + SPACES + LIKE +SPACES + value+"] | Ignore case: " + ignore;
 	}
 
 }

@@ -1,21 +1,18 @@
 /**
  * 
  */
-package in.cubestack.android.lib.criteria;
+package in.cubestack.android.lib.storm.criteria;
 
 import java.util.Arrays;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import in.cubestack.android.lib.storm.SortOrder;
-import in.cubestack.android.lib.storm.core.AliasGenerator;
+import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
+import in.cubestack.android.lib.storm.core.StormException;
 import in.cubestack.android.lib.storm.core.StormRuntimeException;
-import in.cubestack.android.lib.storm.criteria.Order;
-import in.cubestack.android.lib.storm.criteria.Restriction;
-import in.cubestack.android.lib.storm.criteria.Restrictions;
-import in.cubestack.android.lib.storm.criteria.StormRestrictions;
+import in.cubestack.apps.android.storm.entitites.RestrictionTestEntity;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -42,12 +39,6 @@ import in.cubestack.android.lib.storm.criteria.StormRestrictions;
 public class StormRestrictionTest {
 
 	private Restrictions restrictions;
-	private AliasGenerator aliasGenerator;
-	
-	@Before
-	public void init() {
-		aliasGenerator = new AliasGenerator();
-	}
 
 	@Test(expected = StormRuntimeException.class)
 	public void testInvalidClass() {
@@ -76,20 +67,20 @@ public class StormRestrictionTest {
 
 	
 	@Test
-	public void testBasic () {
+	public void testBasic () throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		restrictions = StormRestrictions.restrictionsFor(RestrictionTestEntity.class);
 		
 		Assert.assertNotNull(restrictions);
 		
 		Restriction res = restrictions.equals("name", "Supal Dubey");
-		Assert.assertEquals(res.toSqlString(), aliasGenerator.generateAlias(RestrictionTestEntity.class) + ".NAME =  ? ");
+		Assert.assertEquals(res.toSqlString(), EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias() + ".NAME =  ? ");
 		
 		Assert.assertEquals(res.values().length, 1);
-		Assert.assertEquals(res.values(), new String[] {"Supal Dubey"});
+		Assert.assertArrayEquals(res.values(), new String[] {"Supal Dubey"});
 	}
 	
 	@Test
-	public void testComposite() {
+	public void testComposite() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		restrictions = StormRestrictions.restrictionsFor(RestrictionTestEntity.class);
 		
 		Assert.assertNotNull(restrictions);
@@ -99,29 +90,29 @@ public class StormRestrictionTest {
 		
 		Restriction composite = restrictions.or(resName1, resName2);
 		
-		Assert.assertEquals(composite.toSqlString(), "(" +aliasGenerator.generateAlias(RestrictionTestEntity.class)  +".NAME =  ?  OR " + aliasGenerator.generateAlias(RestrictionTestEntity.class) +".NAME =  ? )");
+		Assert.assertEquals(composite.toSqlString(), "(" +EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias()  +".NAME =  ?  OR " + EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias() +".NAME =  ? )");
 		
 		Assert.assertEquals(composite.values().length, 2);
-		Assert.assertEquals(composite.values(), new String[] {"Supal Dubey", "Supal"});
+		Assert.assertArrayEquals(composite.values(), new String[] {"Supal Dubey", "Supal"});
 	}
 
 	
 	@Test
-	public void testIn() {
+	public void testIn() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		restrictions = StormRestrictions.restrictionsFor(RestrictionTestEntity.class);
 		
 		Assert.assertNotNull(restrictions);
 		
 		Restriction res = restrictions.in("name", Arrays.asList(new String[] {"Supal Dubey", "Supal", "Name"}));
-		Assert.assertEquals(res.toSqlString(), aliasGenerator.generateAlias(RestrictionTestEntity.class) + ".NAME  IN  ( ? , ? , ? )");
+		Assert.assertEquals(res.toSqlString(), EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias() + ".NAME  IN  ( ? , ? , ? )");
 		
 		Assert.assertEquals(res.values().length, 3);
-		Assert.assertEquals(res.values(), new String[] {"Supal Dubey", "Supal", "Name"});
+		Assert.assertArrayEquals(res.values(), new String[] {"Supal Dubey", "Supal", "Name"});
 	}
 
 	
 	@Test
-	public void testCompositeMultiple() {
+	public void testCompositeMultiple() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		restrictions = StormRestrictions.restrictionsFor(RestrictionTestEntity.class);
 		
 		Assert.assertNotNull(restrictions);
@@ -138,19 +129,19 @@ public class StormRestrictionTest {
 		Restriction composite  = restrictions.or(res5, restrictions.and(composite2, composite1));
 		
 		String expectedsql = "(#ALIAS#.NAME NOT NULL  OR ((#ALIAS#.HOURS >  ?  OR #ALIAS#.COST !=  ? ) AND (#ALIAS#.NAME =  ?  OR #ALIAS#.RATE <  ? )))";
-		expectedsql = expectedsql.replaceAll("#ALIAS#", aliasGenerator.generateAlias(RestrictionTestEntity.class));
+		expectedsql = expectedsql.replaceAll("#ALIAS#", EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias());
 		
 		Assert.assertEquals(composite.toSqlString(), expectedsql);
 		
 		Assert.assertEquals(composite.values().length, 4);
-		Assert.assertEquals(composite.values(), new String[] { "5", "500", "Supal Dubey", "3.2"});
+		Assert.assertArrayEquals(composite.values(), new String[] { "5", "500", "Supal Dubey", "3.2"});
 	
 	}
 	
 
 	
 	@Test
-	public void testCompositeMultiple2() {
+	public void testCompositeMultiple2() throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		restrictions = StormRestrictions.restrictionsFor(RestrictionTestEntity.class);
 		
 		Assert.assertNotNull(restrictions);
@@ -165,23 +156,23 @@ public class StormRestrictionTest {
 		Restriction composite  = restrictions.and(composite2, composite1);
 		
 		String expectedsql = "((#ALIAS#.NAME IS NULL  OR #ALIAS#.NAME  IN  ( ? , ? , ? )) AND (#ALIAS#.NAME LIKE ?  OR lower(#ALIAS#.NAME) LIKE ? ))";
-		expectedsql = expectedsql.replaceAll("#ALIAS#", aliasGenerator.generateAlias(RestrictionTestEntity.class));
+		expectedsql = expectedsql.replaceAll("#ALIAS#", EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias());
 		
 		Assert.assertEquals(composite.toSqlString(), expectedsql);
 		
 		Assert.assertEquals(composite.values().length, 5);
-		Assert.assertEquals(composite.values(), new String[] { "Supal Dubey", "Supal", "Name", "Supal Dubey",  "supal"});
+		Assert.assertArrayEquals(composite.values(), new String[] { "Supal Dubey", "Supal", "Name", "Supal Dubey",  "supal"});
 	
 	}
 	
 	@Test
-	public void testForAll () {
+	public void testForAll () throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		restrictions = StormRestrictions.restrictionsFor(RestrictionTestEntity.class);
 		
 		Assert.assertNotNull(restrictions);
 		
 		Restriction res = restrictions.forAll();
-		Assert.assertEquals(res.toSqlString(), aliasGenerator.generateAlias(RestrictionTestEntity.class) + ".ID NOT NULL ");
+		Assert.assertEquals(res.toSqlString(), EntityMetaDataCache.getMetaData(RestrictionTestEntity.class).getAlias() + ".ID NOT NULL ");
 		
 		Assert.assertFalse(res.valueStored());
 	}

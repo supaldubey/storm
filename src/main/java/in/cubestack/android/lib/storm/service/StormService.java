@@ -6,6 +6,7 @@ import in.cubestack.android.lib.storm.criteria.Projection;
 import in.cubestack.android.lib.storm.criteria.Restriction;
 import in.cubestack.android.lib.storm.criteria.Restrictions;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,11 +39,9 @@ public interface StormService {
 
 	public <E> void save(E entity) throws Exception;
 
-	public <E> void save(List<E> entities) throws Exception;
-
 	public <E> int update(E entity) throws Exception;
 
-	public <E> int update(List<E> entities) throws Exception;
+	public <E> int update(Collection<E> entities) throws Exception;
 
 	/**
 	 * Probably this can be customized by calling the below method and passing a
@@ -79,5 +78,7 @@ public interface StormService {
 	<E> List<E> find(Class<E> type, Restriction restriction, Order order) throws Exception;
 
 	<E> List<E> findAll(Class<E> type, Order order) throws Exception;
+
+	<E> void save(Collection<E> entities) throws Exception;
 
 }

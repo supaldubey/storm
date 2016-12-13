@@ -59,12 +59,31 @@ public class RelationMetaData {
 	public void setCascadeTypes(CascadeTypes[] cascadeTypes) {
 		this.cascadeTypes = cascadeTypes;
 	}
+	
+	/**
+	 * The column corresponding to the target entity property. This ideally is the column that defines the Many to One relationships.
+	 * 
+	 * For example for Employee - Department relation entities, departmentId in Employee entity should be the Join column.
+	 * 
+	 *  
+	 * @return the property corresponding to Column on which Join has to be performed.
+	 */
 	public String getJoinColumn() {
 		return joinColumn;
 	}
 	public void setJoinColumn(String joinColumn) {
 		this.joinColumn = joinColumn;
 	}
+	
+	/**
+	 * The column corresponding to the parent entity property.
+	 * 
+	 * For example for Employee - Department relation entities, the primary key in Department entity should be the Join column. 
+	 * Or department Id from Employee should match the ID property in department.
+	 * 
+	 *  
+	 * @return the property corresponding to Column which defines the Join to be performed.
+	 */
 	public String getJoinOnColumn() {
 		return joinOnColumn;
 	}

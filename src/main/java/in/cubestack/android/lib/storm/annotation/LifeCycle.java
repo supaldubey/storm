@@ -1,16 +1,6 @@
-package in.cubestack.android.lib.storm.annotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import in.cubestack.android.lib.storm.lifecycle.LifeCycleHandler;
-
-
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014-15  CubeStack. Built for performance, scalability and ease to use.
+ * Copyright (c) 2016  CubeStack. Built for performance, scalability and ease to use.
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -30,10 +20,43 @@ import in.cubestack.android.lib.storm.lifecycle.LifeCycleHandler;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package in.cubestack.android.lib.storm.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import in.cubestack.android.lib.storm.lifecycle.LifeCycleHandler;
+
+
+/**
+ *
+ * LIfeCycle can be used to consume events triggered during entity lifecycle. <br><br>The Handler declared in below implementation would receive calls from the service
+ * on different lifecycle events. <br><br>
+ * This may be used to control if an entity should be persisted or should be deleted externally. <br>
+ * 
+ * For instance, this may act as a Global rule or validation for an entity. <br><br>For example:<br>
+ * 
+ * <pre>
+ * 	public boolean preSave(Entity entity) {
+ * 		//If time is in past, and entity has past details do not allow to save
+ * 		if(isTimePast(entity)) {
+ * 			return false;
+ * 		}
+ * 	}
+ *</pre>
+ * 
+ * @author Supal Dubey
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface LifeCycle {
 
 	Class<? extends LifeCycleHandler<?>> handler();
+	
+	/**
+	 * Defined for Future use. 
+	 */
 	boolean async() default false;
 }

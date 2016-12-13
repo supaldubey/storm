@@ -1,4 +1,4 @@
-package in.cubestack.android.lib.criteria;
+package in.cubestack.apps.android.storm.entitites;
 
 import in.cubestack.android.lib.storm.FieldType;
 import in.cubestack.android.lib.storm.annotation.Column;

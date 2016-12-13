@@ -32,25 +32,25 @@ import in.cubestack.android.lib.storm.fields.FieldStrategyHandler;
  */
 public class BasicRestriction extends PageableRestriction {
 
+	
 	protected String property;
 	protected Object value;
 	protected SQLOperator symbol;
-	protected TableInformation tableInfo;
 
 	public BasicRestriction(String property, Object value, SQLOperator symbol, TableInformation tableInformation) {
 		this.property = property;
 		this.value = value;
 		this.symbol = symbol;
-		this.tableInfo = tableInformation;
+		this.setTableInfo(tableInformation);
 		
-		validate(tableInfo, property);
+		validate(tableInformation, property);
 	}
 
 	@Override
 	public String toSqlString() {
-		ColumnMetaData columnMetaData = tableInfo.getColumnMetaData(property);
+		ColumnMetaData columnMetaData = getTableInformation().getColumnMetaData(property);
 		FieldType type = columnMetaData.getFiledTypes();
-		return FieldStrategyHandler.handlerFor(type).buildSqlString(tableInfo.getAlias() + "." + columnMetaData.getColumnName(), symbol.symbol(), value);
+		return FieldStrategyHandler.handlerFor(type).buildSqlString(getTableInformation().getAlias() + "." + columnMetaData.getColumnName(), symbol.symbol(), value);
 	} 
 
 	@Override
@@ -77,4 +77,10 @@ public class BasicRestriction extends PageableRestriction {
 			}
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "[" + property + SPACES +symbol +SPACES + value+"]";
+	}
+
 }

@@ -9,21 +9,21 @@ import in.cubestack.android.lib.storm.annotation.PrimaryKey;
 import in.cubestack.android.lib.storm.annotation.Table;
 
 /**
- * @author sdub14
+ * @author Supal Dubey
  *
  */
-@Table(name = "SETTAB")
-public class TestSetBasedEntity {
-
+@Table(name="ANOTHER_TAB")
+public class TestAnother {
+	
 	@PrimaryKey
 	@Column(name="ID", type = FieldType.LONG, addedVersion = 1)
 	private long id;
 
+	@Column(name="AMT", type = FieldType.REAL)
+	private float amount;
+	
 	@Column(name="PAR_ID", type=FieldType.LONG)
 	private long parentId;
-	
-	@Column(name="RNK", type=FieldType.INTEGER)
-	private int rank;
 
 	public long getId() {
 		return id;
@@ -33,22 +33,17 @@ public class TestSetBasedEntity {
 		this.id = id;
 	}
 
+	public float getAmount() {
+		return amount;
+	}
+
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
+
 	public long getParentId() {
 		return parentId;
 	}
 
-	public void setParentId(long parentId) {
-		this.parentId = parentId;
-	}
 
-	public int getRank() {
-		return rank;
-	}
-
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
-	
-	
 }
-

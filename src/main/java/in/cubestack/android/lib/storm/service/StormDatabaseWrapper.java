@@ -3,17 +3,16 @@
  */
 package in.cubestack.android.lib.storm.service;
 
-import in.cubestack.android.lib.storm.core.DatabaseMetaData;
-import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
-import in.cubestack.android.lib.storm.core.TableInformation;
-
 import java.util.List;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import in.cubestack.android.lib.storm.core.DatabaseMetaData;
+import in.cubestack.android.lib.storm.core.EntityMetaDataCache;
+import in.cubestack.android.lib.storm.core.TableInformation;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -41,6 +40,10 @@ public class StormDatabaseWrapper extends SQLiteOpenHelper {
 
 	private static final String TAG = "StormOrm";
 	private DatabaseMetaData metaData;
+	
+	public StormDatabaseWrapper() {
+		super(null, null, null, 0);
+	}
 
 	public StormDatabaseWrapper(Context context, DatabaseMetaData metaData) {
 		super(context, metaData.getName(), (CursorFactory) null, metaData.getVersion());
@@ -56,6 +59,13 @@ public class StormDatabaseWrapper extends SQLiteOpenHelper {
 			} catch (Exception ex) {
 				Log.e(TAG, "Error while creating table for class " + table, ex);
 			}
+			
+			//Push onCreate Event
+			try {
+				metaData.getHandler().newInstance().onCreate(db);
+			} catch (Exception ex) {
+				Log.e(TAG, "Error while running onCreate for DB metadata " + metaData.getHandler(), ex);
+			}
 		}
 	}
 
@@ -66,7 +76,7 @@ public class StormDatabaseWrapper extends SQLiteOpenHelper {
 			for (Class<?> table : metaData.getTables()) {
 				TableInformation information = EntityMetaDataCache.getMetaData(table);
 				//If table version is current DB version or it was added in earlier version.
-				if ( (information.getTableVersion() == metaData.getVersion()) || (oldVersion <= information.getTableVersion()) ) {
+				if ( (information.getTableVersion() == metaData.getVersion()) || (oldVersion < information.getTableVersion()) ) {
 					// Create this table now ..
 					db.execSQL(tablegenerator.createSQLTableQuery(information));
 				} else {
@@ -86,6 +96,13 @@ public class StormDatabaseWrapper extends SQLiteOpenHelper {
 			}
 		} catch (Exception ex) {
 			Log.e(TAG, "Error while creating tale for class ", ex);
+		}
+		
+		//Push onUpdate Event
+		try {
+			metaData.getHandler().newInstance().onUpgrade(db, oldVersion, newVersion);
+		} catch (Exception ex) {
+			Log.e(TAG, "Error while running onUpdate for DB metadata " + metaData.getHandler(), ex);
 		}
 	}
 }

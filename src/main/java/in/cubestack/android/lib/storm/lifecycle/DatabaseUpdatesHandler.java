@@ -1,8 +1,9 @@
-package in.cubestack.android.lib.storm.core;
+/**
+ * 
+ */
+package in.cubestack.android.lib.storm.lifecycle;
 
-import in.cubestack.android.lib.storm.annotation.Relation;
-
-import java.lang.reflect.Field;
+import android.database.sqlite.SQLiteDatabase;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -26,20 +27,10 @@ import java.lang.reflect.Field;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class RelationMetaDataReader {
+public interface DatabaseUpdatesHandler {
 
+	public void onCreate(SQLiteDatabase db);
 	
-	public RelationMetaData fetchRelationMetaData(Field field, Relation relation, AliasGenerator aliasGenerator) {
-		RelationMetaData relationMetaData = new RelationMetaData();
-		relationMetaData.setAlias(aliasGenerator.generateAlias(relation.targetEntity()));
-		relationMetaData.setCascadeTypes(relation.cascade());
-		relationMetaData.setJoinColumn(relation.joinColumn());
-		relationMetaData.setJoinOnColumn(relation.joinOnColumn());
-		relationMetaData.setProperty(field.getName());
-		relationMetaData.setFetchType(relation.fetchType());
-		relationMetaData.setTargetEntity(relation.targetEntity());
-		relationMetaData.setBackingImplementation(field.getType());
-		
-		return relationMetaData;
-	}
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion);
+	
 }

@@ -17,11 +17,16 @@ public abstract class PageableRestriction implements Restriction {
 	private static final String LMT = " LIMIT ";
 
 	private static final int PAGE_SIZE = 20;
+	
+	protected static final String SPACES = "  ";
+	
+	private TableInformation tableInfo;
 
 	private int offset;
 	private int limit;
 	
 	protected void validate(TableInformation tableInfo, String property) {
+		this.setTableInfo(tableInfo);
 		if (tableInfo.getColumnName(property) == null) {
 			throw new StormRuntimeException(
 					"No column found mapped to property " + property + " in Entity " + tableInfo.getMappedClass());
@@ -58,6 +63,14 @@ public abstract class PageableRestriction implements Restriction {
 		}
 
 		return sql;
+	}
+
+	public TableInformation getTableInformation() {
+		return tableInfo;
+	}
+
+	protected void setTableInfo(TableInformation tableInfo) {
+		this.tableInfo = tableInfo;
 	}
 
 }

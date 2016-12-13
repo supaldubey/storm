@@ -1,16 +1,6 @@
 /**
- *
- */
-package in.cubestack.android.lib.storm.annotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-/**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014-15 CubeStack. Built for performance, scalability and ease
+ * Copyright (c) 2016 CubeStack. Built for performance, scalability and ease
  * to use.
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,9 +21,31 @@ import java.lang.annotation.Target;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package in.cubestack.android.lib.storm.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Defines the Primay Key for a Table. <br>
+ * 
+ *  This is mandatory for every table, since Storm favors convention, every table must have a Primary Key.  <br> <br>
+ *  You may wish to have it Auto Generated via SQLite or it may be provided externally. While creating tables, the column on which @PrimaryKey annotation is present
+ *  would be defined as a Primay Key for the table. <br> <br>
+ *  
+ *  Must be defined or declared with @Column 
+ * 
+ * @author Supal Dubey
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface PrimaryKey {
 
+	/**
+	 * Should the unique keys be defined by SQLite Engine?  <br>
+	 * Default is set to true, that is keys are defined and updated by Storm. <br> <br> Please set this values as False, in case you wish to generate the unique values. 
+	 */
 	boolean autoGenrateKey() default true;
 }

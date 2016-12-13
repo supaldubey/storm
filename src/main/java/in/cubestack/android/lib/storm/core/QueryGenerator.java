@@ -34,6 +34,7 @@ import in.cubestack.android.lib.storm.criteria.SQLFunction;
  */
 public class QueryGenerator {
 
+	private static final String DELETE = "DELETE ";
 	private static final String ORDER_BY = " ORDER BY ";
 	private static final String INSERT_INTO = "INSERT INTO ";
 	private static final String GROUP_BY = " GROUP BY ";
@@ -51,14 +52,13 @@ public class QueryGenerator {
 	private static final String VALUES = " VALUES ( ";
 	private static final char QUESTION_MARK = '?';
 
-	private Class<?> entityClass;
 
-	public String rawQuery(Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
+	public String rawQuery(Class<?> entityClass, Restriction restriction, Projection projection) throws IllegalArgumentException, IllegalAccessException, InstantiationException, StormException {
 		return rawQuery(EntityMetaDataCache.getMetaData(entityClass), restriction, projection, null);
 	}
 
 	public String deleteRawQuery(TableInformation tableInformation, Restriction restriction) {
-		return new StringBuilder("DELETE ").append(FROM).append(tableInformation.getTableName()).append(SPACE).append(WHERE)
+		return new StringBuilder(DELETE).append(FROM).append(tableInformation.getTableName()).append(SPACE).append(WHERE)
 				.append(cleanAlias(restriction.toSqlString(), tableInformation.getAlias())).toString();
 	}
 
@@ -69,10 +69,17 @@ public class QueryGenerator {
 
 	public String rawQuery(TableInformation information, Restriction restriction, Projection projection, Order order) throws IllegalArgumentException,
 			IllegalAccessException, InstantiationException, StormException {
+		
+		if(! restriction.getTableInformation().equals(information)) {
+			throw new StormException("Meta information for Table and restrictions do not match. Please review: "
+					+ "\n Restriction meta: " + restriction.getTableInformation()
+							+ "\n Table information " + information);
+		}
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append(SELECT_INIT);
 		generateColumnNames(information, sql, projection);
-		if (information.getRelations() != null) {
+		if (information.getRelations() != null && ! information.getRelations().isEmpty()) {
 			for (RelationMetaData relationMetaData : information.getRelations()) {
 				if (relationMetaData.getFetchType() == FetchType.EAGER) {
 					TableInformation reInformation = EntityMetaDataCache.getMetaData(relationMetaData.getTargetEntity());
@@ -128,10 +135,10 @@ public class QueryGenerator {
 	private String validateClause(String alias, TableInformation tableInformation) {
 		String column = tableInformation.getColumnName(alias);
 
+		//Probably impossible, as there are prechecks, but lets still check.
 		if (column == null) {
 			// You have come till here, that is nothing has matched. GO AWAY AND
-			// FIX THE FUCKING CODE..
-			throw new RuntimeException("No mapping found for " + alias + " in entity table " + tableInformation.getTableName());
+			throw new StormRuntimeException("No mapping found for " + alias + " in entity table " + tableInformation.getTableName());
 		}
 		return column;
 	}

@@ -1,9 +1,3 @@
-package in.cubestack.android.lib.storm.core;
-
-import in.cubestack.android.lib.storm.annotation.Relation;
-
-import java.lang.reflect.Field;
-
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
  * Copyright (c) 2014-15  CubeStack. Built for performance, scalability and ease to use.
@@ -26,20 +20,31 @@ import java.lang.reflect.Field;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
  * USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class RelationMetaDataReader {
+package in.cubestack.apps.android.storm.entitites;
 
+import in.cubestack.android.lib.storm.CascadeTypes;
+import in.cubestack.android.lib.storm.FetchType;
+import in.cubestack.android.lib.storm.FieldType;
+import in.cubestack.android.lib.storm.annotation.Column;
+import in.cubestack.android.lib.storm.annotation.LifeCycle;
+import in.cubestack.android.lib.storm.annotation.PrimaryKey;
+import in.cubestack.android.lib.storm.annotation.Relation;
+import in.cubestack.android.lib.storm.annotation.Table;
+
+/**
+ * @author Supal Dubey
+ *
+ */
+@Table(name="TEST_TAB")
+@LifeCycle(handler=TestHandler.class)
+public class RelationTestEntity {
 	
-	public RelationMetaData fetchRelationMetaData(Field field, Relation relation, AliasGenerator aliasGenerator) {
-		RelationMetaData relationMetaData = new RelationMetaData();
-		relationMetaData.setAlias(aliasGenerator.generateAlias(relation.targetEntity()));
-		relationMetaData.setCascadeTypes(relation.cascade());
-		relationMetaData.setJoinColumn(relation.joinColumn());
-		relationMetaData.setJoinOnColumn(relation.joinOnColumn());
-		relationMetaData.setProperty(field.getName());
-		relationMetaData.setFetchType(relation.fetchType());
-		relationMetaData.setTargetEntity(relation.targetEntity());
-		relationMetaData.setBackingImplementation(field.getType());
-		
-		return relationMetaData;
-	}
+
+	@PrimaryKey
+	@Column(name="ID", type=FieldType.INTEGER)
+	private int id;
+	
+	@Relation(fetchType=FetchType.EAGER, joinOnColumn="id", joinColumn="parentId", targetEntity = TestRandomEntity.class, cascade={CascadeTypes.PERSIST, CascadeTypes.DELETE})
+	private TestRandomEntity entity;
+
 }

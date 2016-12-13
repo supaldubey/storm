@@ -1,13 +1,14 @@
 /**
  * 
  */
-package in.cubestack.android.lib.storm.criteria;
+package in.cubestack.android.lib.storm.core;
 
-import in.cubestack.android.lib.storm.core.TableInformation;
+import android.database.sqlite.SQLiteDatabase;
+import in.cubestack.android.lib.storm.lifecycle.DatabaseUpdatesHandler;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014 CubeStack. Version built for Flash Back..
+ * Copyright (c) 2011 Supal Dubey, supal.dubey@gmail.com
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,19 +28,36 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Restriction {
-
-	public String toSqlString();
-
-	boolean valueStored();
-
-	String[] values();
-
-	Restriction page(int page);
-
-	Restriction limit(int offset, int limit);
-
-	public Object sqlString(Order order);
+public class TestDBHandler implements DatabaseUpdatesHandler {
 	
-	public TableInformation getTableInformation();
+	private boolean udpated;
+	private boolean created;
+	
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		created  =true;
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		udpated = true;
+	}
+	
+	public boolean isUdpated() {
+		return udpated;
+	}
+
+	public void setUdpated(boolean udpated) {
+		this.udpated = udpated;
+	}
+
+	public boolean isCreated() {
+		return created;
+	}
+
+	public void setCreated(boolean created) {
+		this.created = created;
+	}
+
 }

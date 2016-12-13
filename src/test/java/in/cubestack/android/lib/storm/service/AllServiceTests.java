@@ -1,13 +1,15 @@
 /**
  * 
  */
-package in.cubestack.android.lib.storm.criteria;
+package in.cubestack.android.lib.storm.service;
 
-import in.cubestack.android.lib.storm.core.TableInformation;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
- * Copyright (c) 2014 CubeStack. Version built for Flash Back..
+ * Copyright (c) 2011 Supal Dubey, supal.dubey@gmail.com
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,19 +29,12 @@ import in.cubestack.android.lib.storm.core.TableInformation;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Restriction {
+@RunWith(Suite.class)
+@SuiteClasses({
+			TableGeneratorTest.class,
+			BaseServiceTest.class,
+			StormDBWrapperTest.class
+	})
+public class AllServiceTests {
 
-	public String toSqlString();
-
-	boolean valueStored();
-
-	String[] values();
-
-	Restriction page(int page);
-
-	Restriction limit(int offset, int limit);
-
-	public Object sqlString(Order order);
-	
-	public TableInformation getTableInformation();
 }

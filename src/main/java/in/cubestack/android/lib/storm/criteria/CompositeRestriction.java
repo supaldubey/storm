@@ -3,6 +3,8 @@ package in.cubestack.android.lib.storm.criteria;
 import java.util.LinkedList;
 import java.util.List;
 
+import in.cubestack.android.lib.storm.core.StormRuntimeException;
+
 
 /**
  * A core Android SQLite ORM framework build for speed and raw execution.
@@ -38,6 +40,12 @@ public class CompositeRestriction extends PageableRestriction {
 	public CompositeRestriction(Restriction left, Restriction right, RestricitionJoin join) {
 		this.left = left;
 		this.right = right;
+		
+		if(! left.getTableInformation().equals(right.getTableInformation())) {
+			throw new StormRuntimeException("The meta data information for resrtictions do not match. " + this+ "\n Details "
+					+ "Left restriction Meta data: " + left.getTableInformation()+"\nRight Restriction meta data: " + right.getTableInformation());
+		}
+		setTableInfo(left.getTableInformation());
 		this.join = join;
 	}
 	
@@ -74,5 +82,10 @@ public class CompositeRestriction extends PageableRestriction {
 				values.add(obj);
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return left.toString() + SPACES + join + right.toString();
 	}
 }
