@@ -5,6 +5,11 @@ too much to be done manually, or are super-complicated or just want entities to 
 
 The target was to have something which is easy to use, super-fast, convineant and does not asks you to write all queries, updates, creates or even to extend their models.
 
+### Cubestack Apps using Storm
+ * [Coins - Shared & personal Expense Manager with Offline and Sync Capabilities] (https://play.google.com/store/apps/details?id=in.cubestack.coins)
+ * [High Frequency Wordlist Aggregator] (https://play.google.com/store/apps/details?id=in.cubestack.material.androidmaterial)
+ * [Pixr: Unofficial Unsplash Application - Royalty Free High resolution Photos] (https://play.google.com/store/apps/details?id=in.cubestack.pixr)
+
 
 # Adding to Project
 To add storm to your Android project, please use below for Gradle in your project specific Gradle file. This would add Cubestack bitray Mave repository to your project
