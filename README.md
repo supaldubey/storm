@@ -5,6 +5,20 @@ too much to be done manually, or are super-complicated or just want entities to 
 
 The target was to have something which is easy to use, super-fast, convineant and does not asks you to write all queries, updates, creates or even to extend their models.
 
+
+# Adding to Project
+To add storm to your Android project, please use below for Gradle in your project specific Gradle file. This would add Cubestack bitray Mave repository to your project
+```gradle
+maven { url "http://dl.bintray.com/cubestack/maven" }
+```
+Once Maven repository is added, you may import Storm to your project with current version (1.0g) or any other
+
+```gradle
+dependencies {
+    compile 'in.cubestack.android.lib:storm:1.0g'
+}
+```
+
 # Getting Started
 
 Storm needs to know the basic database details and the tables it needs to manage. 
