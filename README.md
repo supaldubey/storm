@@ -65,20 +65,16 @@ View demo application: [link to Google Play Store!](https://play.google.com/stor
 [source code] (https://github.com/supaldubey/gre) and [Entity Mappings] (https://github.com/supaldubey/gre/tree/master/app/src/main/java/in/cubestack/material/androidmaterial/model) 
 
 # Features
-* ******* Absolutely no lines of SQL Written for the application *******
 
-
-* Manage Relations
-* Save entire object graph in one transaction
-* Fetch entire object graph with conditions
-* Limit and Order support
-* Supports cascading
-* Insert
-* Bulk Insert (Transaction)
+* Manage Relations (one to One and One to Many Supported)
+* Save entire object graph in one transaction (In case of relational database and collections)
+* Fetch entire object graph with conditions 
+* Limit and Order support (Paging)
+* Supports cascading (Delete Orphans and Save Child relations)
+* Bulk Insert (Works in Transaction)
 * Auto create tables on Create 
 * Auto update tables on update of application versions
-* Version Audit history
-* Find relations
+* Version Audit history via Annotations
 * Utilizes Where / Restrictions / Limits / Orders constraints (Without a line of SQL code)
 * All list options are Transnational for performance
 * Handy callback options
