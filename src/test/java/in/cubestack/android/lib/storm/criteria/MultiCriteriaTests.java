@@ -12,7 +12,7 @@ import in.cubestack.android.lib.storm.core.StormException;
 import in.cubestack.apps.android.storm.entitites.TestEntity;
 
 /**
- * @author sdub14
+ * @author Supal Dubey
  *
  */
 public class MultiCriteriaTests {
