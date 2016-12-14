@@ -1,9 +1,29 @@
 A small and FAST Java ORM solution for Android SQLite database. Currently being used across projects from Enterprise to Open Source
 
-Storm was created with intention to be easy to use ORM solution for Android platform. While working for a corporate client we realized that the available tools either expect 
-too much to be done manually, or are super-complicated or just want entities to extend their own.
+Storm was created with intention to be easy to use ORM solution for Android platform. While working for a corporate client we realised that the available tools either expect too much to be done manually, or are super-complicated or just want entities to extend their own.
 
-The target was to have something which is easy to use, super-fast, convineant and does not asks you to write all queries, updates, creates or even to extend their models.
+The target was to have something which is easy to use, super-fast,convenient and does not asks you to write all queries, updates, creates or even to extend their models.
+
+
+
+### Cubestack Apps using Storm
+ * [Coins - Shared & personal Expense Manager with Offline and Sync Capabilities] (https://play.google.com/store/apps/details?id=in.cubestack.coins)
+ * [High Frequency Wordlist Aggregator] (https://play.google.com/store/apps/details?id=in.cubestack.material.androidmaterial)
+ * [Pixr: Unofficial Unsplash Application - Royalty Free High resolution Photos] (https://play.google.com/store/apps/details?id=in.cubestack.pixr)
+
+
+# Adding to Project
+To add storm to your Android project, please use below for Gradle in your project specific Gradle file. This would add Cubestack bitray Mave repository to your project
+```gradle
+maven { url "http://dl.bintray.com/cubestack/maven" }
+```
+Once Maven repository is added, you may import Storm to your project with current version (1.0g) or any other
+
+```gradle
+dependencies {
+    compile 'in.cubestack.android.lib:storm:1.0g'
+}
+```
 
 # Getting Started
 
