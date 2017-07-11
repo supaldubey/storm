@@ -75,6 +75,9 @@ Assert.assertTrue(entity.id > 0 );
 
 ```
 
+Not only storm would save the entity for you, it would also auto increment the ID (You may override this behaviour with @PrimaryKey annotation), it would 
+also update the new ID value generated to your entity. 
+
 ### Find and Fetch
 
 There is a handy Criteria API to help you fetch the data from your tables:
@@ -118,8 +121,6 @@ stormService.find(WordList.class, restriction.page(pageNo), Order.orderFor(WordL
          });
 ```
 
-Not only storm would save the entity for you, it would also auto increment the ID (You may override this behaviour with @PrimaryKey annotation), it would 
-also update the new ID value generated to your entity. 
 
 ### That's it
 No other configurations, no create tables, nothing required. We donot want an entry in AndroidManifest, or any String to be declared in the XML.
