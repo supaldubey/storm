@@ -75,6 +75,49 @@ Assert.assertTrue(entity.id > 0 );
 
 ```
 
+### Find and Fetch
+
+There is a handy Criteria API to help you fetch the data from your tables:
+
+Creating the restrictions:
+
+```
+  restrictions = StormRestrictions.restrictionsFor(TestEntity.class);
+  Restriction idRes = restrictions.equals("id", 7);
+```
+Multiple Restrictions:
+
+``` 
+  Restriction name = restrictions.likeIgnoreCase("name", "Bruce Wayne");
+  Restriction combo = restrictions.and(idRes, name);
+```
+
+Using restrictions:
+
+```
+List<TestEntity> responseList = stormService.find(TestEntity.class, combo);
+```
+
+There is also an Async API with callbacks to help avoid writing the AsyncTasks
+
+Example: [Word List Project] (https://github.com/supaldubey/gre/blob/master/app/src/main/java/in/cubestack/material/androidmaterial/fragment/MainFragment.java)
+
+``` 
+ //              WordList is mapped Table, Restirctions can be paged, order on multiple Properties and callback
+stormService.find(WordList.class, restriction.page(pageNo), Order.orderFor(WordList.class, new String[]{"word"}, SortOrder.ASC),
+         new StormCallBack<WordList>() {
+             @Override
+             public void onResults(final List<WordList> results) {
+                // Do something with results on Main UI Thread
+             }
+
+             @Override
+             public void onError(Throwable throwable) {
+               // Handle Error, on UI Thread
+             }
+         });
+```
+
 Not only storm would save the entity for you, it would also auto increment the ID (You may override this behaviour with @PrimaryKey annotation), it would 
 also update the new ID value generated to your entity. 
 
